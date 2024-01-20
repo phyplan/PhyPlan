@@ -1,0 +1,50 @@
+Without_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.141559 0.037965
+
+Without_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.114648 0.031716
+
+Without_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.122282 0.016332
+
+Without_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.127256 0.023737
+
+Without_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.099723 0.027826
+
+With_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.082156 0.054614
+
+With_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.052178 0.017448
+
+With_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.052026 0.025714
+
+With_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.044759 0.017890
+
+With_Perception
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.033039 0.016532
+
+MCTS_With_Perception
+Action Parameters: 2.000000, Contexts: 1.000000, Actions: 50.000000, D: 20.000000
+Final 0.017155 0.000000
+
+MCTS_With_Perception
+Action Parameters: 2.000000, Contexts: 1.000000, Actions: 50.000000, D: 20.000000
+Final 0.017168 0.000000
+
+MCTS_With_Perception
+Action Parameters: 2.000000, Contexts: 5.000000, Actions: 1.000000, D: 20.000000

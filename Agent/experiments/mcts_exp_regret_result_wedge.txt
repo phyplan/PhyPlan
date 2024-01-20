@@ -1,0 +1,79 @@
+MCTS
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.204506 0.044446
+
+MCTS
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.185247 0.057518
+
+MCTS
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.219840 0.069423
+
+MCTS
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.160137 0.098542
+
+MCTS
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.104551 0.063101
+
+Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.204506 0.044446
+
+Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.185247 0.057518
+
+Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.219840 0.069423
+
+Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.160137 0.098542
+
+Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.104551 0.063101
+
+Kernel
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.204165 0.062661
+
+Kernel
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.206140 0.062739
+
+Kernel
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.155357 0.099405
+
+Kernel
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.094933 0.072610
+
+Kernel
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.051285 0.029244
+
+Kernel_Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 1.000000, D: 20.000000
+Final 0.204165 0.062661
+
+Kernel_Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 2.000000, D: 20.000000
+Final 0.206140 0.062739
+
+Kernel_Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 3.000000, D: 20.000000
+Final 0.155357 0.099405
+
+Kernel_Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 4.000000, D: 20.000000
+Final 0.094933 0.072610
+
+Kernel_Widening
+Action Parameters: 2.000000, Contexts: 10.000000, Actions: 5.000000, D: 20.000000
+Final 0.051285 0.029244
