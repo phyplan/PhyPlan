@@ -16,52 +16,62 @@ args = gymutil.parse_arguments(
         "type": str,
         "default": "model.pth",
         "help": "Agent Model"
-    }, {
+    },
+    {
         "name": "--sims",
         "type": int,
         "default": 5000,
         "help": "Number of Simulations Trained"
-    }, {
+    },
+    {
         "name": "--action_params",
         "type": int,
         "default": 2,
         "help": "Number of Action Parameters"
-    }, {
+    },
+    {
         "name": "--contexts",
         "type": int,
         "default": 20,
         "help": "Number of Contexts"
-    }, {
+    },
+    {
         "name": "--actions",
         "type": int,
         "default": 1,
         "help": "Number of Actions"
-    }, {
+    },
+    {
         "name": "--env",
         "type": str,
         "default": "pendulum",
         "help": "Environment"
-    }, {
+    },
+    {
         "name": "--simulate",
         "type": ast.literal_eval,
         "default": False,
         "help": "Render Simulation"
-    }, {
+    },
+    {
         "name": "--fast",
         "type": ast.literal_eval,
         "default": False,
         "help": "Invoke Fast Simulator"
-    }, {
+    },
+    {
         "name": "--perception",
         "type": ast.literal_eval,
         "default": False,
         "help": "Use Perception"
-    }, {
+    },
+    {
         "name": "--robot",
         "type": ast.literal_eval,
         "default": False,
         "help": "Make Robot perform the actions"
-    }])
+    },
+])
 
 np.random.seed(0)
 
@@ -80,48 +90,14 @@ elif args.env == 'paddles':
 elif args.env == 'sliding_bridge':
     from environments.sliding_bridge import *
 
-AGENT_MODEL = 'agent_models/' + args.model
-
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
-ACTION_PARAMETERS = args.action_params
+# ******************** ENVIRONMENT SETUP ******************** #
 
-model = ResNet18FilmAction(ACTION_PARAMETERS,
-                           fusion_place='last_single').to(device)
-model.load_state_dict(torch.load(AGENT_MODEL))
-
-kernel = 1 * RBF(length_scale=1.0)
-gaussian_process = GaussianProcessRegressor(kernel=kernel,
-                                            n_restarts_optimizer=9)
-
-
-def eval(state, action):
-    state = state.to(device)
-    action = torch.tensor(action).unsqueeze(0).float()
-    action = action.to(device)
-    output = model(state, action)
-    return output.item()
-
-
-def evalGP(state, action, actions, rewards):
-    mean_pred, std_pred = gaussian_process.predict([action], return_std=True)
-    sample_pred = np.random.normal(mean_pred[0], std_pred[0])
-    return eval(state, action) + mean_pred[0] + 0.5 * std_pred[0]
-
-
-NUM_CONTEXTS = args.contexts
-NUM_ACTIONS = args.actions
-NUM_SIMS = str(round(float(args.sims) / 1000, 1))
-
-f = open('experiments/regret_result_' + args.env + '.txt', 'a')
-f.write("DQN-%sk-Adapted\n" % (NUM_SIMS))
-f.write('Model: ' + AGENT_MODEL + '\n')
-f.write("Action Parameters: %f, Contexts: %f, Actions: %f\n" %
-        (ACTION_PARAMETERS, NUM_CONTEXTS, NUM_ACTIONS))
-
+# ---------- Simulation Setup ----------
 sim_params = gymapi.SimParams()
-sim_params.dt = 1 / 200
+sim_params.dt = 1 / 400
 sim_params.substeps = 2
 sim_params.up_axis = gymapi.UP_AXIS_Z
 sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.8)
@@ -131,8 +107,7 @@ sim_params.physx.num_position_iterations = 4
 sim_params.physx.num_velocity_iterations = 1
 sim_params.physx.contact_offset = 0.01
 sim_params.physx.rest_offset = 0.0
-sim = gym.create_sim(args.compute_device_id, args.graphics_device_id,
-                     args.physics_engine, sim_params)
+sim = gym.create_sim(args.compute_device_id, args.graphics_device_id, args.physics_engine, sim_params)
 
 plane_params = gymapi.PlaneParams()
 plane_params.normal = gymapi.Vec3(0, 0, 1)
@@ -142,7 +117,7 @@ plane_params.dynamic_friction = 0
 plane_params.restitution = 1
 gym.add_ground(sim, plane_params)
 
-# Comment for realistic lighting
+# ---------- Uncomment to stop realistic lighting ----------
 # gym.set_light_parameters(sim, 0, gymapi.Vec3(1, 1, 1), gymapi.Vec3(1, 1, 1), gymapi.Vec3(0, 0, -1))
 
 viewer = None
@@ -154,34 +129,74 @@ env_lower = gymapi.Vec3(-env_spacing, 0.0, -env_spacing)
 env_upper = gymapi.Vec3(env_spacing, env_spacing, env_spacing)
 env = gym.create_env(sim, env_lower, env_upper, 1)
 
+# ---------- Set camera viewing location ----------
+if args.simulate:
+    main_cam_pos = gymapi.Vec3(0, 0.001, 3)
+    main_cam_target = gymapi.Vec3(0.0, 0.0, 0.0)
+    gym.viewer_camera_look_at(viewer, None, main_cam_pos, main_cam_target)
+
+
+# *********************************************************** #
+# ******************** ALGORITHMIC SETUP ******************** #
+
+
+ACTION_PARAMETERS = args.action_params
+AGENT_MODEL = 'agent_models/' + args.model
+NUM_CONTEXTS = args.contexts
+NUM_ACTIONS = args.actions
+NUM_SIMS = str(round(float(args.sims) / 1000, 1))
+
+model = ResNet18FilmAction(ACTION_PARAMETERS, fusion_place='last_single').to(device)
+model.load_state_dict(torch.load(AGENT_MODEL))
+
+kernel = 1 * RBF(length_scale=1.0)
+gaussian_process = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=9)
+
 config = setup(gym, sim, env, viewer, args)
 
-if args.simulate:
-    cam_pos = gymapi.Vec3(0, 0.001, 3)
-    # if args.env == 'sliding_bridge':
-    #     cam_pos = gymapi.Vec3(0.0, 0.001, 10.0)
-    cam_target = gymapi.Vec3(0.0, 0.0, 0.0)
-    gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
 
-# camera_properties = gymapi.CameraProperties()
-# camera_properties.width = 500
-# camera_properties.height = 500
-# camera_handle = gym.create_camera_sensor(env, camera_properties)
-# # camera_position = gymapi.Vec3(0.0, 0.001, 2.1)
-# # if args.env == 'sliding_bridge':
-# #     camera_position = gymapi.Vec3(0.0, 0.001, 8.0)
-# # camera_target = gymapi.Vec3(0, 0, 0)
-# camera_position = gymapi.Vec3(0.0, 0.001, 2)
-# camera_target = gymapi.Vec3(0, 0, 0)
-# if args.env == 'sliding':
-#     camera_position = gymapi.Vec3(-0.75, -0.649, 1.75)
-#     camera_target = gymapi.Vec3(-0.75, -0.65, 0)
-# elif args.env == 'pendulum':
-#     camera_position = gymapi.Vec3(0, 0.001, 1.75)
-#     camera_target = gymapi.Vec3(0, 0, 0)
-# elif args.env == 'sliding_bridge':
-#     camera_position = gymapi.Vec3(0.0, 0.001, 2.0)
-# gym.set_camera_location(camera_handle, env, camera_position, camera_target)
+def eval(state, action):
+    '''
+    Evaluate the 'action' using DQN model
+    
+    # Parameters
+    state   = current state, \\
+    action  = action to evaluate
+
+    # Returns
+    reward directly from model
+    '''
+    state = state.to(device)
+    action = torch.tensor(action).unsqueeze(0).float()
+    action = action.to(device)
+    output = model(state, action)
+    return output.item()
+
+
+def evalGP(state, action, actions, rewards):
+    '''
+    Evaluate the 'action' using DQN model
+    
+    # Parameters
+    state   = current state, \\
+    action  = action to evaluate
+
+    # Returns
+    reward (adapted using GP-UCB)
+    '''
+    mean_pred, std_pred = gaussian_process.predict([action], return_std=True)
+    return eval(state, action) + mean_pred[0] + 0.5 * std_pred[0]
+
+# *********************************************************** #
+# ******************** RUN THE ALGORITHM ******************** #
+
+
+# ---------- Prepare files to record results ----------
+f = open('experiments/regret_result_' + args.env + '.txt', 'a')
+f.write("DQN-%sk-Adapted\n" % (NUM_SIMS))
+f.write('Model: ' + AGENT_MODEL + '\n')
+f.write("Action Parameters: %f, Contexts: %f, Actions: %f\n" %
+        (ACTION_PARAMETERS, NUM_CONTEXTS, NUM_ACTIONS))
 
 img_dir = config['img_dir']
 
@@ -192,17 +207,17 @@ regrets = []
 for iter in range(NUM_CONTEXTS):
     print(f"Iteration {iter+1}")
 
+    # Generate and record a new context
     generate_random_state(gym, sim, env, viewer, args, config)
     rgb_filename = "%s/rgb_%d.png" % (img_dir, iter)
 
     camera_handle = config['cam_handle']
-    gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR,
-                                   rgb_filename)
+    gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, rgb_filename)
 
-    goal_pos = get_goal_position_from_simulator(gym, sim, env, viewer, args, config)
+    goalPos = get_goal_position_from_simulator(gym, sim, env, viewer, args, config)
     with open('experiments/position_' + args.env + '.txt', 'a') as pos_f:
         pos_f.write(f'Iteration {iter}\n')
-        pos_f.write(f'Goal_Pos: {goal_pos}\n')
+        pos_f.write(f'Goal_Pos: {goalPos}\n')
 
     opt_reward = 1.0
     state = read_image('%s/rgb_%d.png' % (img_dir, iter)).float().unsqueeze(0)
@@ -227,8 +242,7 @@ for iter in range(NUM_CONTEXTS):
         res = minimize(eval_curr, best_action, method='L-BFGS-B', bounds=bnds)
         best_action = res.x
 
-        reward_ideal = execute_action(gym, sim, env, viewer, args, config,
-                                      best_action)
+        reward_ideal = execute_action(gym, sim, env, viewer, args, config, best_action)
         reward_curr = eval(state, best_action)
         if reward_ideal > best_reward:
             best_reward = reward_ideal
