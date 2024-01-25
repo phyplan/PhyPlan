@@ -1,0 +1,14 @@
+BATCH_SIZE: 128
+EARLY_STOPPING: 2000
+
+SAVE_PLOT: True
+SAVE_MODEL: False
+CUDA_ENABLED: True
+NOISE: False
+NUM_DATA: 5000
+
+MODEL_DIR: ''
+MODEL_NAME: '/path/to/data'
+
+num_layers: 8
+neurons_per_layer: 40

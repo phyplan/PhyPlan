@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot name="ball">
+  <material name="Green">
+    <color rgba="0.0 1.0 0.0 1.0"/>
+  </material>
+  <link name="ball">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <surface>
+        <bounce restitution_coefficient="1"/>
+        <!-- <friction>
+          <ode>
+            <mu>0.0</mu>
+            <mu2>0.0</mu2>
+          </ode>
+        </friction> -->
+        <friction value="0.0"/> 
+      </surface>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <!-- <friction value="0.0"/> -->
+      <inertia ixx="0.0008" ixy="0.0" ixz="0.0" iyy="0.0008" iyz="0.0" izz="0.0008"/>
+      <!-- <inertia ixx="800000" ixy="0.0" ixz="0.0" iyy="800000" iyz="0.0" izz="800000"/> -->
+    </inertial>
+  </link>
+</robot>

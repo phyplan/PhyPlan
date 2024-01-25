@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<robot name="seesaw">
+<material name="Blue">
+    <color rgba="0.0 0.0 1.0 1.0"/>
+  </material>
+    <link name="base">
+      <inertial>
+        <mass value="10" />
+        <origin xyz="0.0 0.0 0.15" rpy="0 0 0" />
+        <inertia  ixx="1" ixy="0" ixz="0"
+                  iyy="1" iyz="0"
+                  izz="1" />
+      </inertial>
+      <visual>
+        <origin xyz="0.0 0.0 0.15" rpy="0 0 0" />
+        <geometry>
+          <box size="0.05 0.4 0.3"/>
+        </geometry>
+      <material name="Blue"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.15" rpy="0 0 0" />
+        <geometry>
+          <box size="0.05 0.4 0.3"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name = "joint1" type = "continuous">
+      <origin xyz="0 0 0.4" rpy="0 0 0"/>
+      <parent link="base"/>
+      <child link="seesaw"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <link name="seesaw">
+      <inertial>
+        <mass value="20" />
+        <origin xyz="0 0 0.005" rpy="0 0 0" />
+        <inertia  ixx="1" ixy="0" ixz="0"
+                  iyy="1" iyz="0"
+                  izz="1" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0.005" rpy="0 0 0" />
+        <geometry>
+          <box size="0.8 0.4 0.01"/>
+        </geometry>
+      <material name="Blue"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.005" rpy="0 0 0" />
+        <geometry>
+          <box size="0.8 0.4 0.01"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name = "joints" type = "fixed">
+      <origin xyz="-0.4 0 0.005" rpy="0 0 0"/>
+      <parent link="seesaw"/>
+      <child link="link1"/>
+    </joint>
+
+    <link name="link1">
+      <inertial>
+        <mass value="10" />
+        <origin xyz="-0.005 0 0.025" rpy="0 0 0" />
+        <inertia  ixx="1" ixy="0" ixz="0"
+                  iyy="1" iyz="0"
+                  izz="1" />
+      </inertial>
+      <visual>
+        <origin xyz="-0.005 0 0.025" rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.4 0.05"/>
+        </geometry>
+      <material name="Blue"/>
+      </visual>
+      <collision>
+        <origin xyz="-0.005 0 0.025" rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.4 0.05"/>
+        </geometry>
+      </collision>
+    </link>
+
+</robot>

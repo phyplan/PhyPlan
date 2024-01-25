@@ -1,0 +1,10 @@
+WITHOUT PERCEPTION: True #to run without_perception pipeline
+PERCEPTION: False #to run perception pipeline
+NUM_EP: 100 #no. of episodes required
+
+
+WITHOUT_PERCEPTION_SAVE_DIR: '' #add full text file location eg. folder/without_perception.txt to save data
+PERCEPTION_SAVE_DIR: ''  #add full text file location eg. folder/perception.txt to save data
+IMAGES: 'images_swinging' #add folder to save images
+
+STARTING_SIMULATION_NUMB: 0 #starting episode no.

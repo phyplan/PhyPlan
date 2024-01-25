@@ -1,0 +1,16 @@
+BATCH_SIZE: 128
+EARLY_STOPPING: 6400
+
+SAVE_PLOT: False
+SAVE_MODEL: True
+CUDA_ENABLED: True
+NOISE: False
+NUM_DATA:  5000
+
+MODEL_DIR: ''
+MODEL_NAME: '/path/to/data'
+TRAIN_MODE: 'pidnn'
+num_layers: 8
+neurons_per_layer: 40
+alpha: 1
+collocation_multiplier: 4

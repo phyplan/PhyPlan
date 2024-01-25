@@ -1,0 +1,1 @@
+Please change the input columns in the hitting_ff.py file in the function dataloader accordingly to adjust for input change.
