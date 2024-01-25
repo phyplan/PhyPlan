@@ -10,14 +10,9 @@ from typing import List
 
 
 def setup():
-    GROUNDING_DINO_CONFIG_PATH =  "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    GROUNDING_DINO_CHECKPOINT_PATH = "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/weights/groundingdino_swint_ogc.pth"
-    SAM_CHECKPOINT_PATH =  "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/weights/sam_vit_h_4b8939.pth"
+    GROUNDING_DINO_CONFIG_PATH =  "<path to parent directory of GroundingDINO>/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+    GROUNDING_DINO_CHECKPOINT_PATH = "<path to parent directory of GroundingDINO weights>/groundingdino_swint_ogc.pth"
     grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
-    SAM_ENCODER_VERSION = "vit_h"
-    # sam = sam_model_registry[SAM_ENCODER_VERSION](checkpoint=SAM_CHECKPOINT_PATH).to(device=DEVICE)
-    # sam_predictor = SamPredictor(sam)
     return grounding_dino_model
  
 def enhance_class_name(class_names: List[str]) -> List[str]:

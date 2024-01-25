@@ -70,13 +70,6 @@ elif args.env == 'sliding':
     from environments.sliding import *
 elif args.env == 'wedge':
     from environments.wedge import *
-elif args.env == 'catapult':
-    from environments.catapult import *
-elif args.env == 'bridge':
-    from environments.bridge import *
-elif args.env == 'paddles':
-    from environments.paddles import *
-    bnds = get_bnds(args)
 elif args.env == 'sliding_bridge':
     from environments.sliding_bridge import *
 
@@ -85,7 +78,7 @@ elif args.env == 'sliding_bridge':
 
 # ---------- Simulation Setup ----------
 sim_params = gymapi.SimParams()
-sim_params.dt = 1 / 200
+sim_params.dt = 1 / 400
 sim_params.substeps = 2
 sim_params.up_axis = gymapi.UP_AXIS_Z
 sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.8)
@@ -118,9 +111,21 @@ env_upper = gymapi.Vec3(env_spacing, env_spacing, env_spacing)
 env = gym.create_env(sim, env_lower, env_upper, 1)
 
 # ---------- Set camera viewing location ----------
+
 if args.simulate:
-    main_cam_pos = gymapi.Vec3(0, 0.001, 3)
-    main_cam_target = gymapi.Vec3(0.0, 0.0, 0.0)
+    if args.env == 'sliding_bridge':
+        main_cam_pos = gymapi.Vec3(-1, 1, 2)
+        main_cam_target = gymapi.Vec3(0.2, -0.2, 0.0)
+    if args.env == 'wedge':
+        main_cam_pos = gymapi.Vec3(-1, -1, 2)
+        main_cam_target = gymapi.Vec3(0.0, -0.0, 0.5)
+    if args.env == 'pendulum':
+        main_cam_pos = gymapi.Vec3(-1, 1, 2)
+        main_cam_target = gymapi.Vec3(0.2, -0.2, 0.0)
+    if args.env == 'sliding':
+        main_cam_pos = gymapi.Vec3(1.5, -1.5, 2)
+        main_cam_target = gymapi.Vec3(-0.5, -0.5, 0.0)
+
     gym.viewer_camera_look_at(viewer, None, main_cam_pos, main_cam_target)
 
 
@@ -149,9 +154,8 @@ while resets < L * M:
     i = resets // M
     j = resets % M
     if j == 0:
+        args.img_file = "%s/rgb_%d.png" % (img_dir, i)
         generate_random_state(gym, sim, env, viewer, args, config)
-        rgb_filename = "%s/rgb_%d.png" % (img_dir, i)
-        gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, rgb_filename)
     action, reward = execute_random_action(gym, sim, env, viewer, args, config)
     f.write("%f %f " % (i, j))
     for a in action:
