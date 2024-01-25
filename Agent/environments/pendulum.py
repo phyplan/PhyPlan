@@ -503,17 +503,6 @@ def execute_action(gym, sim, env, viewer, args, config, action):
         pos_targets[7] = 0.04
         pos_targets[8] = 0.04
         gym.set_actor_dof_position_targets(env, franka_handle, pos_targets)
-        curr_time = gym.get_sim_time(sim)
-        while gym.get_sim_time(sim) <= curr_time + 2.0:
-            gym.simulate(sim)
-            gym.fetch_results(sim, True)
-            gym.step_graphics(sim)
-            gym.render_all_camera_sensors(sim)
-            if args.simulate:
-                gym.draw_viewer(viewer, sim, False)
-                gym.sync_frame_time(sim)
-                if gym.query_viewer_has_closed(viewer):
-                    exit()
 
     # Close Franka's Arm's gripper
     def close_gripper():

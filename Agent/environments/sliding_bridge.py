@@ -535,6 +535,7 @@ def get_piece_position(gym, sim, env, viewer, args, config):
     piece_pos[0] += 90
     piece_pos = (-(piece_pos[0] - img_width/2) * obj_z / focus_x) + cam_x, ((piece_pos[1] - img_height/2) * obj_z / focus_y) + cam_y
     # return piece_pos
+    # Getting position from the simulator due to frequent error in ball detection
     return get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
 
 
@@ -645,17 +646,6 @@ def execute_action(gym, sim, env, viewer, args, config, action):
         pos_targets[7] = 0.04
         pos_targets[8] = 0.04
         gym.set_actor_dof_position_targets(env, franka_handle_to_move, pos_targets)
-        curr_time = gym.get_sim_time(sim)
-        while gym.get_sim_time(sim) <= curr_time + 2.0:
-            gym.simulate(sim)
-            gym.fetch_results(sim, True)
-            gym.step_graphics(sim)
-            gym.render_all_camera_sensors(sim)
-            if args.simulate:
-                gym.draw_viewer(viewer, sim, False)
-                gym.sync_frame_time(sim)
-                if gym.query_viewer_has_closed(viewer):
-                    exit()
 
     # Close Franka's Arm's gripper
     def close_gripper(franka_handle_to_move):
@@ -692,7 +682,7 @@ def execute_action(gym, sim, env, viewer, args, config, action):
         set_loc(gymapi.Vec3(-x_off*math.sin(PENDULUM_INIT_ANGLE), y_off*math.sin(PENDULUM_INIT_ANGLE), 0.85), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi/2 + math.pi/2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)        
         go_to_loc(gymapi.Vec3(-0.38, 0, 0.72), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
         set_loc(gymapi.Vec3(-x_off*math.sin(PENDULUM_INIT_ANGLE), y_off*math.sin(PENDULUM_INIT_ANGLE), 0.75), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi/2 + math.pi/2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)
-        go_to_loc(gymapi.Vec3(-0.38, 0, 0.61), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
+        go_to_loc(gymapi.Vec3(-0.375, 0, 0.62), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
 
         # Grab the pendulum and the bridge
         close_gripper(franka_handle)

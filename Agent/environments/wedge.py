@@ -504,7 +504,7 @@ def execute_action(gym, sim, env, viewer, args, config, action):
         pos_targets[8] = 0.04
         gym.set_actor_dof_position_targets(env, franka_handle, pos_targets)
         curr_time = gym.get_sim_time(sim)
-        while gym.get_sim_time(sim) <= curr_time + 2.0:
+        while gym.get_sim_time(sim) <= curr_time + 0.5:
             gym.simulate(sim)
             gym.fetch_results(sim, True)
             gym.step_graphics(sim)
@@ -627,7 +627,7 @@ def execute_action(gym, sim, env, viewer, args, config, action):
                 break
         ball_state = gym.get_actor_rigid_body_states(env, ball_handle, gymapi.STATE_ALL)
         _, _, z = ball_state['pose']['p'][0]
-        if z <= 0.2:
+        if z <= 0.14:
             break
 
     if args.perception:
