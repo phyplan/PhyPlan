@@ -105,7 +105,7 @@ Migrate to the Agent directory and run `python data_generation.py` with specific
 Note: Use `data_generation_gpucb.py` to generate data with GP-UCB algorithm (as opposed to random sampling).
 
 ## Training Agent Models
-Run `python train.py` with specific arguments to train the models. Various arguments are:
+Migrate to the Agent directory and run `python train.py` with specific arguments to train the models. Various arguments are:
 
 | Argument | Description |
 | --- | --- |
@@ -117,7 +117,7 @@ Run `python train.py` with specific arguments to train the models. Various argum
 | fast | Train model on PINN data |
 
 ## Evaluating Regret Results
-Run `python {phyre_}eval_agent.py` with specific arguments to get regret results. Various arguments are:
+Migrate to the Agent directory and run `python {phyre_}eval_agent.py` with specific arguments to get regret results. Various arguments are:
 
 | Argument | Description |
 | --- | --- |
@@ -132,7 +132,7 @@ Run `python {phyre_}eval_agent.py` with specific arguments to get regret results
 
 <!-- 
 ## Evaluating Action Results (Archived)
-Run `python {phyre_}eval_partial_agent.py` with specific arguments to get regret results. Various arguments are:
+Migrate to the Agent directory and run `python {phyre_}eval_partial_agent.py` with specific arguments to get regret results. Various arguments are:
 
 | Argument | Description |
 | --- | --- |
@@ -146,7 +146,7 @@ Run `python {phyre_}eval_partial_agent.py` with specific arguments to get regret
 ## MCTS
 This is the latest agent design which does not need any training or data generataion. It uses skill composition.
 
-Run `python pinn_mcts_eval_agent.py` with specific arguments to run MCTS algorithm. Various arguments are:
+Migrate to the Agent directory and run `python pinn_mcts_eval_agent.py` with specific arguments to run MCTS algorithm. Various arguments are:
 
 | Argument | Description |
 | --- | --- |
@@ -161,7 +161,7 @@ Run `python pinn_mcts_eval_agent.py` with specific arguments to run MCTS algorit
 | adaptive (bool) | Set False to not use GP-UCB adaptation |
 
 ## Experimentation Techniques
-Modify the scripts `data_generate.sh`, `train.sh`, `regret_exp.sh`, and `action_exp.sh` with the specific hyperparameters of the experiment. Stitch everything in `script.sh` and run it. Running all stages will take around 4-5 hours when robot is not employed.
+Migrate to the Agent directory and modify the scripts `data_generate.sh`, `train.sh`, `regret_exp.sh`, and `action_exp.sh` with the specific hyperparameters of the experiment. Stitch everything in `script.sh` and run it. Running all stages will take around 4-5 hours when robot is not employed.
 
 **Note: Employing robot significantly slows down the simulation to avoid execution errors. Since, the robotic arm is not involved in reasoning, and only executes the actions to demostrate the physical feasibility and performability of our tasks, it is advised to train, analyse and compare the models without the robotic arm unless robotic visualisation is needed.**
 
