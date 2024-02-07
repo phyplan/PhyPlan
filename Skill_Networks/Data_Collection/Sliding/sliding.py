@@ -110,8 +110,6 @@ for ep in range(start_ep,end_ep):
     #initial_velocity
     init_vel = np.random.uniform(1.5, 5.0)
     setup(init_vel)
-
-        fw = open("experiments_same_mu.txt", "a+")
  
 
     start_time = gym.get_sim_time(sim)
