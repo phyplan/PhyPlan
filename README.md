@@ -170,4 +170,18 @@ Modify the scripts `data_generate.sh`, `train.sh`, `regret_exp.sh`, and `action_
 ### Pendulum, Sliding and Projectile
 Run `python3 *_driver.py` to train the respective models. Deatils in the README of the PINN/Skills folder.
 
+
+## Citation
+
+```
+@misc{,
+      title={PhyPlan:Compositional and Adaptive Physical Task Reasoning with Physics-Informed Skill Networks for Robot Manipulators}, 
+      author={},
+      year={2024},
+      eprint={},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
+
 </div>
