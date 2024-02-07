@@ -1,4 +1,4 @@
-name: gpu_new
+name: phyplan
 channels:
   - pytorch
   - conda-forge
@@ -237,4 +237,3 @@ dependencies:
     - wrapt==1.15.0
     - x21==0.4.10
     - yapf==0.40.2
-prefix: /home/dell/miniconda3/envs/gpu_new

@@ -1,16 +1,11 @@
 from isaacgym import gymapi, gymutil
-import os
 import ast
-import sys
 import torch
-import torchvision
 from model import *
-import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 import torch.nn.functional as F
-from torchvision.io import read_image
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 
 args = gymutil.parse_arguments(
     custom_parameters = [

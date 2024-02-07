@@ -81,12 +81,6 @@ elif args.env == 'sliding':
     from environments.sliding import *
 elif args.env == 'wedge':
     from environments.wedge import *
-elif args.env == 'catapult':
-    from environments.catapult import *
-elif args.env == 'bridge':
-    from environments.bridge import *
-elif args.env == 'paddles':
-    from environments.paddles import *
 elif args.env == 'sliding_bridge':
     from environments.sliding_bridge import *
 
