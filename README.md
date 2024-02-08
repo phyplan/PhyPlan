@@ -102,7 +102,7 @@ Migrate to the Agent directory and run `python data_generation.py` with specific
 | `wedge` | Bounce | 2 |
 | `sliding_bridge` | Bridge | 3 |
 
-Note: Use `data_generation_gpucb.py` to generate data with GP-UCB algorithm (as opposed to random sampling).
+<!-- Note: Use `data_generation_gpucb.py` to generate data with GP-UCB algorithm (as opposed to random sampling). -->
 
 ## Training Agent Models
 Migrate to the Agent directory and run `python train.py` with specific arguments to train the models. Various arguments are:
