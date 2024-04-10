@@ -179,36 +179,3 @@ DQN-2.0k-Simple
 Model: agent_models/model_wedge_actual_100.pth
 Action Parameters: 2.000000, Contexts: 1.000000, Actions: 50.000000
 Final 0.033188 0.000000
-
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 5.000000, Actions: 1.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 5.000000, Actions: 1.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-Final 0.155902 0.000000
-
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-Final 0.037024 0.000000
-
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-Final 0.155902 0.000000
-
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-Final 0.034604 0.000000
-
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000
-MCTS_With_Perception
-Action Parameters: 2.000000, Contexts: 1.000000, Actions: 5.000000, D: 20.000000

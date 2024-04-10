@@ -376,7 +376,7 @@ def get_goal_position(gym, sim, env, viewer, args, config):
     cam_y = camera_target.y
     obj_z = camera_position.z - get_goal_height(gym, sim, env, viewer, args, config)
     gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, args.img_file)
-    goal_pos, _ = detection.location(args.img_file, 'red square')
+    goal_pos, _ = detection.detection.location(args.img_file, 'red square')
     goal_pos = (-(goal_pos[0] - img_width / 2) * obj_z / focus_x) + cam_x, ((goal_pos[1] - img_height / 2) * obj_z / focus_y) + cam_y
     return goal_pos
 
@@ -409,9 +409,9 @@ def get_piece_position(gym, sim, env, viewer, args, config):
     cam_y = camera_target.y
     obj_z = camera_position.z - get_piece_height(gym, sim, env, viewer, args, config)
     gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, args.img_file)
-    piece_pos, conf = detection.location(args.img_file, 'small blue ball')
+    piece_pos, conf = detection.detection.location(args.img_file, 'small blue ball')
     if conf < 0.5:
-        piece_pos, _ = detection.location(args.img_file, 'red square')
+        piece_pos, _ = detection.detection.location(args.img_file, 'red square')
     piece_pos = (-(piece_pos[0] - img_width / 2) * obj_z / focus_x) + cam_x, ((piece_pos[1] - img_height / 2) * obj_z / focus_y) + cam_y
     return piece_pos
 
@@ -433,7 +433,7 @@ def generate_random_action():
     return np.array(action)
 
 
-def execute_action(gym, sim, env, viewer, args, config, action):
+def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=False):
     '''
     Execute the desired 'action' in the simulated environment with or without robot indicated by 'args.robot' argument
     
@@ -654,6 +654,9 @@ def execute_action(gym, sim, env, viewer, args, config, action):
 
     dist = sqrt((puck_pos[0] - goal_pos[0])**2 + (puck_pos[1] - goal_pos[1])**2)
     reward = 1 - dist / init_dist
+
+    if return_ball_pos:
+        return reward, puck_pos
 
     return reward
 
