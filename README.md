@@ -116,8 +116,13 @@ Migrate to the Agent directory and run `python train.py` with specific arguments
 | contexts_step | Number of training contexts after which to save intermediate model |
 | fast | Train model on PINN data |
 
-## Evaluating Regret Results
+## Run Baselines
+
+### DQN
 Migrate to the Agent directory and run `python {phyre_}eval_agent.py` with specific arguments to get regret results. Various arguments are:
+
+### LLM
+Migrate to the Agent directory and run `python llm_brain.py` in one terminal and minimize it letting it run in the background. Now, in a new terminal again migrate to the Agent directory and run `python llm_eval_agent.py` with specific arguments to get regret results. Various arguments are:
 
 | Argument | Description |
 | --- | --- |
@@ -143,7 +148,7 @@ Migrate to the Agent directory and run `python {phyre_}eval_partial_agent.py` wi
 | contexts | Total number of contexts to evaluate |
 | threshold | Performs actions until regret threshold is achieved | -->
 
-## MCTS
+## Run PhyPlan
 This is the latest agent design which does not need any training or data generataion. It uses skill composition.
 
 Migrate to the Agent directory and run `python pinn_mcts_eval_agent.py` with specific arguments to run MCTS algorithm. Various arguments are:
