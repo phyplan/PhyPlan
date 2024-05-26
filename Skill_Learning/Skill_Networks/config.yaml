@@ -1,0 +1,21 @@
+BATCH_SIZE: 128
+EARLY_STOPPING: 6000
+
+SAVE_PLOT: False #plot
+SAVE_MODEL: True #save model
+MODEL_DIR: '' #model location  eg location/
+MODEL_NAME: 'Projectile' #model name eg hitting
+
+CUDA_ENABLED: True #gpu
+NUM_DATA: 5000 #no. of training data points
+
+SKILL: 'Throwing'  #Sliding , Bouncing , Hitting , Swinging , Throwing 
+PARAMETER: 'Fixed' # For Sliding: Fixed -- same mu ,  Determine-- find unkown fixed mu , Variable -- unkown mu
+DATASET: '/home/loc/to/data.csv'
+TRAIN_MODE: 'pinn' #nn -- all skills or pinn -- Sliding , Swinging , Throwing  
+
+#model architecture
+num_layers: 8
+neurons_per_layer: 40
+alpha: 0.01
+collocation_multiplier: 4

@@ -60,23 +60,19 @@ source activate_env.sh
 │   ├── <b>random_eval_agent.py:</b> (Random Baseline)
 │   └── <b>train.py:</b> (To train the baseline models)
 │
-└── <b>Skill_Networks:</b>
-    ├── <b>Data_Collection:</b>
-    │   ├── <b>Bouncing:</b>
-    │   ├── <b>Hitting:</b>
-    │   ├── <b>Sliding:</b>
-    │   ├── <b>Swinging:</b>
-    │   ├── <b>Throwing:</b>
-    │   └── <b>urdf:</b>
-    └── <b>Network:</b>
-        ├── <b>Bouncing:</b>
-        ├── <b>Hitting:</b>
-        └── <b>Skills:</b>
-            ├── <b>General_Sliding:</b>
-            ├── <b>Pendulum:</b>
-            ├── <b>Projectile:</b>
-            ├── <b>Sliding:</b>
-            └── <b>Variable_Mu_Sliding:</b>
+└── <b>Skill_Learning:</b>
+    ├── <b>Data_Collection:</b>  (Collecting dataset for different skills)
+    │   ├── <b>Bouncing</b>
+    │   ├── <b>Hitting</b>
+    │   ├── <b>Sliding</b>
+    │   ├── <b>Swinging</b>
+    │   └── <b>Throwing</b>  
+    └── <b>Skill_Network:</b> (Learning different skill)
+        ├── <b>config.yaml</b>  
+        ├── <b>main.py:</b>
+        ├── <b>data.py:</b>
+        ├── <b>model.py:</b>  
+        └── <b>loss.py:</b>
 </code></pre>
 
 
@@ -165,18 +161,18 @@ Migrate to the Agent directory and modify the scripts `data_generate.sh`, `train
 
 **Note: Employing robot significantly slows down the simulation to avoid execution errors. Since, the robotic arm is not involved in reasoning, and only executes the actions to demostrate the physical feasibility and performability of our tasks, it is advised to train, analyse and compare the models without the robotic arm unless robotic visualisation is needed.**
 
-## PINN
+ 
 
-### Pendulum, Sliding and Projectile
-Run `python3 *_driver.py` to train the respective models. Deatils in the README of the PINN/Skills folder.
+### Skill Learning
+Training different skills like sliding, swinging, throwing, hitting, bouncing. 
 
 
 ## Citation
 
 ```
 @misc{,
-      title={PhyPlan:Compositional and Adaptive Physical Task Reasoning with Physics-Informed Skill Networks for Robot Manipulators}, 
-      author={},
+      title={PhyPlan: Generalizable and Rapid Physical Task Planning with Physics-Informed Skill Networks for Robot Manipulators}, 
+      author={Chopra, Mudit and Barnawal, Abhinav and Vagadia, Harshil and Banerjee, Tamajit and Tuli, Shreshth and Chakraborty, Souvik and Paul, Rohan},
       year={2024},
       eprint={},
       archivePrefix={arXiv},
