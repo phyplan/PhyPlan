@@ -1,5 +1,5 @@
 # PhyPlan
-## Compositional and Adaptive Physical Task Reasoning with Physics-Informed Skill Networks for Robot Manipulators
+## Generalizable and Rapid Physical Task Planning with Physics-Informed Skill Networks for Robot Manipulators
 
 ### Please find here the [Website](https://phyplan.github.io/), and the [Paper]().
 
