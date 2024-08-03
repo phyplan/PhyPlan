@@ -556,7 +556,7 @@ def generate_random_action():
     return np.array(action)
 
 
-def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos):
+def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=False):
     '''
     Execute the desired 'action' in the simulated environment with or without robot indicated by 'args.robot' argument
     

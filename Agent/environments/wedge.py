@@ -118,7 +118,7 @@ def setup(gym, sim, env, viewer, args):
     pos_targets = [0]
     gym.set_actor_dof_position_targets(env, wedge_handle, pos_targets)
 
-    if args.robot:        
+    if args.robot:
         # --------------- Franka's Table ---------------
         side_table_dims = gymapi.Vec3(0.2, 0.3, 0.4)
         asset_options = gymapi.AssetOptions()

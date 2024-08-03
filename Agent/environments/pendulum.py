@@ -31,7 +31,7 @@ def setup(gym, sim, env, viewer, args):
     camera_properties = gymapi.CameraProperties()
     camera_properties.width = 500
     camera_properties.height = 500
-    camera_position = gymapi.Vec3(-0.6, -0.599, 1.5)
+    camera_position= gymapi.Vec3(-0.6, -0.599, 1.5)
     camera_target = gymapi.Vec3(-0.6, -0.6, 0)
 
     camera_handle = gym.create_camera_sensor(env, camera_properties)
@@ -425,7 +425,7 @@ def generate_random_action():
     return np.array(action)
 
 
-def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos):
+def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=False):
     '''
     Execute the desired 'action' in the simulated environment with or without robot indicated by 'args.robot' argument
     
