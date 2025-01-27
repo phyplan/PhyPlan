@@ -174,15 +174,5 @@ Training different skills like sliding, swinging, throwing, hitting, bouncing.
 
 ## Citation
 
-```
-@misc{,
-      title={PhyPlan: Generalizable and Rapid Physical Task Planning with Physics-Informed Skill Networks for Robot Manipulators}, 
-      author={Chopra, Mudit and Barnawal, Abhinav and Vagadia, Harshil and Banerjee, Tamajit and Tuli, Shreshth and Chakraborty, Souvik and Paul, Rohan},
-      year={2024},
-      eprint={},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO}
-}
-```
 
 </div>
