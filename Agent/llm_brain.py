@@ -1,6 +1,3 @@
-import ast
-import time
-import requests
 from flask import Flask, request, jsonify
 import google.generativeai as genai
 
@@ -25,13 +22,19 @@ def generate_first_prompt(env, goal_pos):
         Sanity check 2: How does the drop angle of the pendulum affect the puck's position with respect to the goal?"
     elif env == 'pendulum':
         return f"There is a robot and a goal located at {goal_pos} outside the direct reach of the robot. There is a ball that needs to reach the goal. The environment has a fixed pillar over which the ball is resting, and a pendulum hanging over the ball that the robot can orient to hit the ball to throw it to the goal. The robot can orient the pendulum along any vertical plane and choose to drop the pendulum from any angle from the vertical axis. When hit with a pendulum, the puck projectiles and lands far away on the ground. \
-        Sanity check 1: How does the plane of the pendulum affect the puck's position with respect to the goal? \
-        Sanity check 2: How does the drop angle of the pendulum affect the puck's position with respect to the goal?"
+        Sanity check 1: How does the plane of the pendulum affect the ball's position with respect to the goal? \
+        Sanity check 2: How does the drop angle of the pendulum affect the ball's position with respect to the goal?"
     elif env == 'sliding_bridge':
         return f"There is a robot and a goal located at {goal_pos} outside the direct reach of the robot. There is a puck that needs to reach the goal. The environment has a fixed table over which the puck slides, a movable bridge over which the puck slides and a pendulum that the robot can orient to move the puck towards the goal. The robot can orient the pendulum along any vertical plane, orient the bridge in any horizontal direction and choose to drop the pendulum from any angle from the vertical axis. When hit with a pendulum, the puck slides on the table, then on the bridge and finally projectiles to land far away on the ground. \
         Sanity check 1: How does the plane of the pendulum affect the puck's position with respect to the goal? \
         Sanity check 2: How does the drop angle of the pendulum affect the puck's position with respect to the goal? \
         Sanity check 3: How does the orientation angle of the bridge affect the puck's position with respect to the goal?"
+    elif env == 'pendulum_wedge':
+        return f"There is a robot and a goal located at {goal_pos} outside the direct reach of the robot. There is a ball that needs to reach the goal. The environment has a fixed pillar over which the ball is resting, a movable wedge (an inclined plane at 45 degrees from the horizontal plane), and a pendulum hanging over the ball that the robot can orient to hit the ball. The robot can orient the pendulum along any vertical plane and choose to drop the pendulum from any angle from the vertical axis. However, the pendulum can only be used to hit the ball in a direction away from the goal, making it impossible to reach the goal directly by the pendulum alone. To solve this, the robot must move and orient the wedge such that the ball bounces off it after being hit by the pendulum, and lands inside the goal. The robot can change the radial distance of the wedge from the origin, the direction of this radial distance (in polar coordinates), and orient the wedge in any horizontal direction. \
+        Sanity check 1: How does the drop angle of the pendulum affect the ball's trajectory and its position with respect to the wedge? \
+        Sanity check 2: How does the plane of the pendulum affect the ball's trajectory position with respect to the wedge? \
+        Sanity check 3: How does the position (radial distance and angle) of the wedge affect the ball's position with respect to the goal? \
+        Sanity check 4: How does the orientation angle of the wedge affect the ball's position with respect to the goal?"
     else:
         return "Sorry! Unknown Environment."
 
@@ -73,11 +76,20 @@ def generate_second_prompt(env, bnds):
             5. The puck lands in the correct half and in line but fell short of the goal, I'd say 'FELL SHORT by <horizontal distance between puck and goal>'. \
             6. Finally, the puck successfully landed in the goal, I'd say 'GOAL'. \
         Note: In your response, do not write anything else except the (pendulum's plane angle, pendulum's drop angle, bridge's orientation angle) triplet. Send in tuple FORMAT: (angle 1, angle 2, angle 3). Do not emphasise the answer, just return plain text. Let's begin with an initial guess!"
+    elif env == 'pendulum_wedge':
+        return f"In one line, give the numerical values of the pendulum's plane angle, pendulum's drop angle, wedge's radial distance from origin, direction angle of this radial distance (in polar form), and wedge's orientation angle (all in decimal radians or meters where applicable). The bound for pendulum plane orientation is ({bnds[0][0]}, {bnds[0][1]}), that for pendulum drop angle is ({bnds[1][0]}, {bnds[1][1]}), that for wedge radial distance is ({bnds[2][0]}, {bnds[2][1]}), that for radial direction angle is ({bnds[3][0]}, {bnds[3][1]}), and that for wedge orientation angle is ({bnds[4][0]}, {bnds[4][1]}). I will tell you where the ball landed, and you should modify your answer accordingly till the ball reaches the goal. I have marked the ground into two halves. The goal lies in one half, and the robot and the wedge are at the centre. Throughout the conversation, remember that my response would be one of these: \n \
+            1. The ball lands in the half not containing goal, I'd say 'WRONG HALF'. \
+            2. The ball lands in the correct half but left of the goal, I'd say 'LEFT by <horizontal distance between ball and goal>'. \
+            3. The ball lands in the correct half but right of the goal, I'd say 'RIGHT by <horizontal distance between ball and goal>'. \
+            4. The ball lands in the correct half and in line but overshot the goal, I'd say 'OVERSHOT by <horizontal distance between ball and goal>'. \
+            5. The ball lands in the correct half and in line but fell short of the goal, I'd say 'FELL SHORT by <horizontal distance between ball and goal>'. \
+            6. Finally, the ball successfully landed in the goal, I'd say 'GOAL'. \
+        Note: In your response, do not write anything else except the (pendulum plane angle, pendulum drop angle, wedge radial distance, wedge radial direction, wedge orientation angle) tuple. Send in tuple FORMAT: (angle 1, angle 2, distance, angle 3, angle 4). Do not emphasise the answer, just return plain text. Let's begin with an initial guess!"
     else:
         return "Sorry! Unknown Environment."
 
 
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
 chat = model.start_chat(history=[])
 env = ''
 bnds = None

@@ -24,11 +24,13 @@ for ep in range(start_ep,end_ep):
     args = gymutil.parse_arguments(description = 'Round Table')
     torch.cuda.empty_cache()
     sim_params = gymapi.SimParams()
-    sim_params.dt = 1 / 200
-    sim_params.substeps = 2
+    sim_params.dt = 1 / 5
+    sim_params.substeps = 160
     sim_params.up_axis = gymapi.UP_AXIS_Z
     sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.8)
     sim_params.physx.use_gpu = False
+    # sim_params.physx.use_gpu = True
+    # sim_params.use_gpu_pipeline = True
     sim_params.physx.solver_type = 1
     sim_params.physx.num_position_iterations = 4
     sim_params.physx.num_velocity_iterations = 1
@@ -57,6 +59,8 @@ for ep in range(start_ep,end_ep):
     asset_options = gymapi.AssetOptions()
     asset_options.override_inertia = True
     asset_options.fix_base_link = True
+    asset_options.angular_damping=0
+    asset_options.linear_damping=0
     pendulum_asset = gym.load_asset(sim, asset_root, pendulum_asset_file, asset_options)
     pose_pendulum = gymapi.Transform()
     pose_pendulum.p = gymapi.Vec3(0, 0, 0)
@@ -64,7 +68,8 @@ for ep in range(start_ep,end_ep):
     rigid_props = gym.get_actor_rigid_shape_properties(env, pendulum_handle)
     for r in rigid_props:
         r.restitution = 1
-    rigid_props[-1].friction = 0.1
+    # rigid_props[-1].friction = 0.1
+    rigid_props[-1].friction = 0.0
     gym.set_actor_rigid_shape_properties(env, pendulum_handle, rigid_props)
 
     #finalize initial state
@@ -77,6 +82,7 @@ for ep in range(start_ep,end_ep):
         props["driveMode"].fill(gymapi.DOF_MODE_NONE)
         props["stiffness"].fill(0.0)
         props["damping"].fill(0.0)
+        props["friction"].fill(0.0)
         gym.set_actor_dof_properties(env, pendulum_handle, props)
         dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
         dof_states['pos'][0] = angle1
@@ -125,24 +131,31 @@ for ep in range(start_ep,end_ep):
         dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
         cur_angle = dof_states['pos'][1]
         
-        if cur_angle < 0.1 :
+        # if (cur_angle < 0.1) or (t - start_time > 0.401):
+        # if (cur_angle < 0.1) or (t - start_time > 0.61):
+        # if (t - start_time > 0.81):
+        if (t - start_time > 2.4):
+        # if (t - start_time > 2.5):
+        # if (t - start_time > 0.47):
             break
 
         gym.render_all_camera_sensors(sim)
 
         #Storing Image of pendulum
         if config['PERCEPTION']:
-            if i >= 4:
-                rgb_filename = "%s/rgb_%d_%f_%f_%f_%f_%d.png" % (img_dir, ep, t - start_time, init_angle,cur_angle,omega, i)
-                gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, rgb_filename)
+            #if i >= 1:
+            rgb_filename = "%s/rgb_%d_%f_%f_%f_%f_%d.png" % (img_dir, ep, t - start_time, init_angle,cur_angle,omega, i)
+            gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, rgb_filename)
             i +=1
         
         # Without Perception Results
         else:
             fw = open(config["WITHOUT_PERCEPTION_SAVE_DIR"], "a+")
             ans = str(ep)+','+str(t- start_time)+','+str(init_angle)+','+str(cur_angle)+','+str(omega)
-            fw.write(ans+'\n')
-            fw.close()  
+            # if (t - start_time > 0.61):
+            if (t - start_time > 0.81):
+                fw.write(ans+'\n')
+                fw.close()  
         
         
         data_length += 1

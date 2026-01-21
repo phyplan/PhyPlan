@@ -32,13 +32,14 @@ def get():
     # print('--------------- RESPONSE: --', response)
     
     iter = response['iter']
-   
+    
         #loading_model
     env = response['env']
     model = PPO.load(response['model'])
     
     #response to feature
     feature = np.array(response['feature'])
+    
     reward = model.predict(feature, deterministic=True)[0][0][0]
     #return data
     data = {
@@ -46,7 +47,7 @@ def get():
         }
     return jsonify(data)
 
- 
+
 
 
 app = Flask(__name__)

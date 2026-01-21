@@ -63,29 +63,6 @@
       <child link="link2"/>
     </joint>
 
-    <link name="link2">
-      <inertial>
-        <mass value="500" />
-        <origin xyz="0 0 0.025" rpy="0 0 0" />
-        <inertia  ixx="1000" ixy="0" ixz="0"
-                  iyy="1000" iyz="0"
-                  izz="1000" />
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0.025" rpy="0 0 0" />
-        <geometry>
-          <box size="0.01 0.15 0.05"/>
-        </geometry>
-        <material name="Red"/>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0.025" rpy="0 0 0" />
-        <geometry>
-          <box size="0.01 0.15 0.05"/>
-        </geometry>
-      </collision>
-    </link>
-
     <joint name = "joint3" type = "fixed">
       <origin xyz="0 0.075 0.01" rpy="0 0 0"/>
       <parent link="base"/>

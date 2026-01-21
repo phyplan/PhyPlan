@@ -12,7 +12,7 @@ with open(config_filename, "r") as f:
     config = yaml.safe_load(f)
 
 #Setting up Segment Anything and Grounding Dino
-HOME ="/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/"
+HOME ="/path/to/dino/and/sam"
 GROUNDING_DINO_CONFIG_PATH = os.path.join(HOME, "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
 print(GROUNDING_DINO_CONFIG_PATH, "; exist:", os.path.isfile(GROUNDING_DINO_CONFIG_PATH))
 GROUNDING_DINO_CHECKPOINT_PATH = os.path.join(HOME, "weights", "groundingdino_swint_ogc.pth")
@@ -26,7 +26,7 @@ grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model
 folder_path = config['IMAGES']
 
 # Regular expression pattern to match the filename format
-pattern = r'rgb_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)\.png'
+pattern = r'rgb_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)\.png'
 
 
 files = os.listdir(folder_path)
@@ -34,7 +34,7 @@ files = os.listdir(folder_path)
 # Function to extract 'ep' and 'i' values from filename, episode no. and iteration number from images name
 def extract_ep_i(filename):
     match = re.match(pattern, filename)
-    ep, _, _, _,_,_,_, i = match.groups()
+    ep, _, _, _,_,_, _, _,_,_, i = match.groups()
     ep = int(ep)
     i = int(i)
     return ep, i
@@ -75,25 +75,21 @@ act_dist = []
 import pandas as pd
 import numpy as np
 
-pattern = r'rgb_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)\.png'
+pattern = r'rgb_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)_(.*?)\.png'
 
-# List all files in the folder
-# files = os.listdir(folder_path)
 
 # Function to extract 'ep' and 'i' values from filename
 def extract_ep(filename):
     match = re.match(pattern, filename)
     if match:
-        ep, time, init_vel_y, init_vel_x, vel_y,dist_y, dist_x, i = match.groups()
+        ep, time, init_vel_y, init_vel_x, init_len_y, init_len_x, dist_y,vel_y, dist_x, vel_x, i = match.groups()
         ep = int(ep)
         i = int(i)
-        return int(ep), float(time), float(init_vel_y), float(init_vel_x)  ,float(vel_y),float(dist_y), float(dist_x),int(i)
+        return int(ep), float(time), float(init_vel_y), float(init_vel_x)  , float(init_len_y), float(init_len_x), float(dist_y),float(vel_y), float(dist_x), float(vel_x),int(i)
 
 t = 0
 for j in range(0,len(files)):
   all_detections = []
-  if len(files[j]) < 20:
-    continue
 
 
   ep = j
@@ -159,15 +155,16 @@ for j in range(0,len(files)):
   diff_p[:,0] =    diff_p[:,0] * 1/f_x
   diff_p[:,1] =    diff_p[:,1] * 1/f_x
 
-
-  #for calculating difference do central with t-5 and t+5
-  for i in range(5,len(diff_p)-5):
+  for i in range(len(diff_p)):
      
-    ep, time, init_vel_y, init_vel_x, vel_y,dist_y, dist_x, _ = extract_ep(files[j][i])
+    ep, time, init_vel_y, init_vel_x, init_len_y, init_len_x, dist_y,vel_y, dist_x, vel_x, _ = extract_ep(files[j][i])
 
-    data.append([t,i-10,time,init_vel_y,init_vel_x,(diff_p[i+5][1]-diff_p[i-5][1])/0.01,-1*diff_p[i][1],diff_p[i][0]])
-    act_data.append([t,i-10,time, init_vel_y, init_vel_x, vel_y,dist_y, dist_x])
-    vel.append((diff_p[i+5][1]-diff_p[i-5][1])/0.01)
+    if (i >= 1):
+      data.append([t,time,init_vel_y,init_vel_x,init_len_y, init_len_x,7.0+diff_p[i][1],(diff_p[i][1]-diff_p[i-1][1])/0.2,diff_p[i][0],(diff_p[i][0]-diff_p[i-1][0])/0.2])
+    else:
+      data.append([t,time,init_vel_y,init_vel_x,init_len_y, init_len_x,7.0+diff_p[i][1],0,diff_p[i][0],0])
+    act_data.append([t,time, init_vel_y, init_vel_x, vel_y,dist_y, dist_x])
+    vel.append((diff_p[i][1]-diff_p[i-1][1])/0.2)
     dist.append(diff_p[i][1])
     act_vel.append(vel_y)
     act_dist.append(dist_y)
@@ -180,20 +177,5 @@ df = pd.DataFrame(data)
 # File name
 file_name = config['PERCEPTION_SAVE_DIR']
 # Save DataFrame to CSV
-df.to_csv(file_name, index=False,header = False)
+df.to_csv(file_name, index=False,header = False,mode='a+')
 print(f"Data saved to {file_name}")
-
-
-if config['WITHOUT PERCEPTION']:
-    df = pd.DataFrame(act_data)
-    # File name
-    file_name = config['WITHOUT_PERCEPTION_SAVE_DIR']
-    # Save DataFrame to CSV
-    df.to_csv(file_name, index=False,header = False)
-    print(f"Data saved to {file_name}")
-
- 
-
-
-
-

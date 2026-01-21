@@ -70,7 +70,7 @@ def extract_ep(filename):
 t = 0
 for j in range(0,len(files)):
   all_detections = []
-  if len(files[j]) < 20:
+  if len(files[j]) < 3:
     continue
 
   
@@ -104,15 +104,16 @@ for j in range(0,len(files)):
 
 
   #for calculating difference do central with t-10 and t+10
-  for i in range(10,len(all_detections)-10):
+  for i in range(1,len(all_detections)):
     ep, time,init_angle,cur_angle,omega, _ = extract_ep(files[j][i])
 
-    data.append([t,i-10,init_angle,time,all_detections[i],(all_detections[i+10]-all_detections[i-10])/0.1])   #-5 5
-    act_data.append([t,i-10,init_angle,time,cur_angle,omega])
-    vel.append((all_detections[i+10]-all_detections[i-10])/0.1)
-    dist.append(all_detections[i])
-    act_vel.append(omega)
-    act_dist.append(cur_angle)
+    if (time >= 0.199):
+      data.append([t,time,init_angle,all_detections[i],(all_detections[i]-all_detections[i-1])/0.2])   #-5 5
+      act_data.append([t,i-1,init_angle,time,cur_angle,omega])
+      vel.append((all_detections[i]-all_detections[i-1])/0.2)
+      dist.append(all_detections[i])
+      act_vel.append(omega)
+      act_dist.append(cur_angle)
     
   t +=1
 
@@ -122,7 +123,7 @@ df = pd.DataFrame(data)
 file_name = config['PERCEPTION_SAVE_DIR']
 
 # Save DataFrame to CSV
-df.to_csv(file_name, index=False,header = False)
+df.to_csv(file_name, index=False,header = False, mode='a+')
 print(f"Data saved to {file_name}")
 
 if config['WITHOUT PERCEPTION']:

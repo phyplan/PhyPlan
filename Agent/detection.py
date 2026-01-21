@@ -1,6 +1,5 @@
 import os
 import sys
-import groundingdino
 import supervision as sv
 import numpy as np
 import torch
@@ -9,40 +8,40 @@ from GroundingDINO.groundingdino.util.inference import Model
 import cv2
 from typing import List
 
-
-class detection:
-
-    GROUNDING_DINO_CONFIG_PATH =  "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-    GROUNDING_DINO_CHECKPOINT_PATH = "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/weights/groundingdino_swint_ogc.pth"
-    grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
-    
-    def __init__(self) -> None:
+class Detector:
+    def __init__(self):
+        # self.setup()
         pass
     
-    @staticmethod
-    def enhance_class_name(class_names: List[str]) -> List[str]:
+    def setup(self):
+        GROUNDING_DINO_CONFIG_PATH =  "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+        DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        GROUNDING_DINO_CHECKPOINT_PATH = "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/weights/groundingdino_swint_ogc.pth"
+        SAM_CHECKPOINT_PATH =  "/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/weights/sam_vit_h_4b8939.pth"
+        self.grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
+        SAM_ENCODER_VERSION = "vit_h"
+    
+    def enhance_class_name(self, class_names: List[str]) -> List[str]:
         return [
             f"all {class_name}s"
             for class_name
             in class_names
         ]
 
-    @staticmethod
-    def location(SOURCE_IMAGE_PATH, object_desc):
+
+    def location(self, SOURCE_IMAGE_PATH, object_desc):
         CLASSES = [object_desc]
         BOX_TRESHOLD = 0.3
         TEXT_TRESHOLD = 0.25
         image = cv2.imread(SOURCE_IMAGE_PATH)
 
         # detect objects
-        detections = detection.grounding_dino_model.predict_with_classes(
+        detections = self.grounding_dino_model.predict_with_classes(
             image=image,
-            classes=detection.enhance_class_name(class_names=CLASSES),
+            classes=self.enhance_class_name(class_names=CLASSES),
             box_threshold=BOX_TRESHOLD,
             text_threshold=TEXT_TRESHOLD
         )
-        # print("DETECTIONS", detections)
-        # annotate image with detections
         box_annotator = sv.BoxAnnotator()
         labels = [
             f"{confidence:0.2f}"
@@ -57,21 +56,4 @@ class detection:
         conf = detections.confidence[max_ind]
         centre = [(xy[0] + xy[2]) / 2, (xy[1] + xy[3]) / 2]
 
-        # if env == 'pendulum':
-        #     # for cent in centre:
-        #     # centre[0], centre[1] = -((centre[0] - 250) * 1.5) / 190, ((centre[1] - 250) * 1.5) / 190
-        #     centre = -(centre[0] - 250) / 200, (centre[1] - 250) / 200
-        # elif env == 'sliding':
-        #     return centre
-        # elif env == 'wedge':
-        #     return centre
-        # elif env == 'sliding_bridge':
-        #     return centre
-        # elif env == 'paddles':
-        #     return centre
-
         return centre, conf
-
-
-# print(location("/home/dell/Desktop/Combined_copy/Agent/data/images_eval_sliding/rgb_1.png", "small blue ball"))
-# print(location("/home/dell/Desktop/Combined_copy/Agent/annotated_img.png", "blue ball"))

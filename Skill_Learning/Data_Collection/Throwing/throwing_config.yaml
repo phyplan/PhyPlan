@@ -1,10 +1,11 @@
-WITHOUT PERCEPTION: True #to run without_perception pipeline
-PERCEPTION: False #to run perception pipeline
-NUM_EP: 100 #no. of episodes required
+WITHOUT PERCEPTION: False #to run without_perception pipeline
+PERCEPTION: True #to run perception pipeline
+NUM_EP: 15 #no. of episodes required
+DATA_LIM: 0 # min data points
 
 
 WITHOUT_PERCEPTION_SAVE_DIR: '' #add full text file location eg. folder/without_perception.txt to save data
 PERCEPTION_SAVE_DIR: '' #add full text file location eg. folder/perception.txt to save data
-IMAGES: 'images_projectile' #add folder to save images
+IMAGES: '' #add folder to save images
 
 STARTING_SIMULATION_NUMB: 0 #starting episode no.

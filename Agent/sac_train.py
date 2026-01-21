@@ -37,7 +37,7 @@ parser.add_argument('--contexts', type=int, default=100, help='Number of Context
 parser.add_argument('--contexts_step', type=int, default=10, help='Number of Step Contexts')
 parser.add_argument('--action_params', type=int, default=2, help='Number of Action Parameters')
 
- 
+
 args = parser.parse_args()
 
 print(args.env)
@@ -54,8 +54,8 @@ NUM_CONTEXTS = args.contexts
 NUM_CONTEXTS_STEP = args.contexts_step
 ACTION_PARAMETERS = args.action_params
 
-NUM_CONTEXTS_STEP = 50
-NUM_CONTEXTS = 50
+# NUM_CONTEXTS_STEP = 50
+# NUM_CONTEXTS = 50
 
 train_folder = 'data/images_train_' + args.env + ('_pinn' if args.fast else '_actual')
 test_folder = 'data/images_test_' + args.env + ('_pinn' if args.fast else '_actual')
@@ -86,11 +86,12 @@ def testLoss(model):
         action = item['action'].to(device)
         reward = item['reward'].detach().cpu().numpy()
         feature = feature_class(img, action).detach().cpu().numpy()
+        
         num_actions = len(reward)
         for j in range(0,num_actions):
             feature_test = feature[j].T
             output, _ = model.predict(feature_test, deterministic=True)
-            loss = np.abs(output[0] - reward[j])/np.abs(reward[j])
+            loss = np.abs(output[0] - reward[j])/(np.abs(reward[j])+1e-6)
             running_loss += loss
         if i == 0:
             print('OUT:', output)

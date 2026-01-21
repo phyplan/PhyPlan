@@ -5,16 +5,9 @@ import time
 import torch
 import requests
 import numpy as np
-from flask import Flask, request
 
 gym = gymapi.acquire_gym()
 args = gymutil.parse_arguments(custom_parameters=[
-    {
-        "name": "--action_params",
-        "type": int,
-        "default": 2,
-        "help": "Number of Action Parameters"
-    },
     {
         "name": "--contexts",
         "type": int,
@@ -71,13 +64,15 @@ elif args.env == 'paddles':
     from environments.paddles import *
 elif args.env == 'sliding_bridge':
     from environments.sliding_bridge import *
-elif args.env == 'combo_wpsb':
-    from environments.combo_wpsb import *
+elif args.env == 'pendulum_wedge':
+    from environments.pendulum_wedge import *
+elif args.env == 'combo':
+    from Agent.environments.combo import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
-ACTION_PARAMETERS = args.action_params
+ACTION_PARAMETERS = len(bnds)
 NUM_CONTEXTS = args.contexts
 NUM_ACTIONS = args.actions
 LLM_URL = f"http://localhost:7002/send"
@@ -129,26 +124,6 @@ if args.simulate:
     #     cam_pos = gymapi.Vec3(0.0, 0.001, 10.0)
     cam_target = gymapi.Vec3(0.0, 0.0, 0.0)
     gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
-
-# camera_properties = gymapi.CameraProperties()
-# camera_properties.width = 500
-# camera_properties.height = 500
-# camera_handle = gym.create_camera_sensor(env, camera_properties)
-# camera_position = gymapi.Vec3(0.0, 0.001, 2.1)
-# if args.env == 'sliding_bridge':
-#     camera_position = gymapi.Vec3(0.0, 0.001, 8.0)
-
-# camera_position = gymapi.Vec3(0.0, 0.001, 2)
-# camera_target = gymapi.Vec3(0, 0, 0)
-# if args.env == 'sliding':
-#     camera_position = gymapi.Vec3(-0.75, -0.649, 1.75)
-#     camera_target = gymapi.Vec3(-0.75, -0.65, 0)
-# elif args.env == 'pendulum':
-#     camera_position = gymapi.Vec3(0, 0.001, 1.75)
-# elif args.env == 'sliding_bridge':
-#     camera_position = gymapi.Vec3(0.0, 0.001, 2.0)
-
-# gym.set_camera_location(camera_handle, env, camera_position, camera_target)
 
 if args.env == 'paddles':
     bnds = get_bnds(args)

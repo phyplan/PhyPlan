@@ -32,8 +32,10 @@ def setup(gym, sim, env, viewer, args):
     camera_properties = gymapi.CameraProperties()
     camera_properties.width = 500
     camera_properties.height = 500
-    camera_position = gymapi.Vec3(-0.75, -0.749, 1.75)
-    camera_target = gymapi.Vec3(-0.75, -0.75, 0)
+    camera_position = gymapi.Vec3(0.0, 0.001, 1.5)
+    camera_target = gymapi.Vec3(0, 0, 0)
+    # camera_position = gymapi.Vec3(-0.75, -0.749, 1.75)
+    # camera_target = gymapi.Vec3(-0.75, -0.75, 0)
 
     camera_handle = gym.create_camera_sensor(env, camera_properties)
     gym.set_camera_location(camera_handle, env, camera_position, camera_target)
@@ -79,12 +81,25 @@ def setup(gym, sim, env, viewer, args):
     pose_pendulum_table = gymapi.Transform()
     pose_pendulum_table.p = gymapi.Vec3(0, 0, curr_height + 0.5 * 0.05)
     pendulum_table_handle = gym.create_actor(env, pendulum_table_asset, pose_pendulum_table, "Pendulum Table", 0, 0)
+    # pendulum_table_asset = gym.create_box(sim, PENDULUM_TABLE_DIM, PENDULUM_TABLE_DIM, 0.05, asset_options)
+    # pose_pendulum_table = gymapi.Transform()
+    # pose_pendulum_table.p = gymapi.Vec3(0, 0, curr_height + 0.5 * 0.05)
+    # pendulum_table_handle = gym.create_actor(env, pendulum_table_asset, pose_pendulum_table, "Pendulum Table", 0, 0)
+    # gym.set_rigid_body_color(env, pendulum_table_handle, 0, gymapi.MESH_VISUAL_AND_COLLISION, gymapi.Vec3(1, 1, 0))
     rigid_props = gym.get_actor_rigid_shape_properties(env, pendulum_table_handle)
     for r in rigid_props:
         r.restitution = 0.9
         r.friction = 0.2
         r.rolling_friction = 0.0
     gym.set_actor_rigid_shape_properties(env, pendulum_table_handle, rigid_props)
+
+    # asset_options = gymapi.AssetOptions()
+    # asset_options.fix_base_link = True
+    # bridge_asset = gym.create_box(sim, 6.0, 0.5, 0.05, asset_options)
+    # pose_bridge = gymapi.Transform()
+    # pose_bridge.p = gymapi.Vec3(3.0, 0, curr_height + 0.5 * 0.05)
+    # bridge_handle = gym.create_actor(env, bridge_asset, pose_bridge, "Bridge", 0, 0)
+    # gym.set_rigid_body_color(env, bridge_handle, 0, gymapi.MESH_VISUAL_AND_COLLISION, gymapi.Vec3(1, 1, 0))
 
     # ---------------- Bridge ----------------
     asset_root = './assets/'
@@ -105,6 +120,7 @@ def setup(gym, sim, env, viewer, args):
     asset_options.fix_base_link = True
     goal_asset = gym.create_box(sim, 0.1, 0.1, 0.01, asset_options)
     pose_goal = gymapi.Transform()
+    # pose_goal.p = gymapi.Vec3(1, 0, curr_height + 0.5 + 0.5 * 0.05)
     pose_goal.p = gymapi.Vec3(0, 0, 0.1)
     goal_handle = gym.create_actor(env, goal_asset, pose_goal, "Goal", 0, 0)
     gym.set_rigid_body_color(env, goal_handle, 0, gymapi.MESH_VISUAL_AND_COLLISION, gymapi.Vec3(1, 0, 0))
@@ -115,6 +131,16 @@ def setup(gym, sim, env, viewer, args):
         r.friction = 1.0
         r.rolling_friction = 1.0
     gym.set_actor_rigid_shape_properties(env, goal_handle, rigid_props)
+
+
+    # box_size = 0.03
+    # asset_options = gymapi.AssetOptions()
+    # asset_options.density = PUCK_DENSITY
+    # box_asset = gym.create_box(sim, box_size, box_size, box_size, asset_options)
+    # pose_box = gymapi.Transform()
+    # pose_box.p = gymapi.Vec3(0, 0, curr_height + 0.5 * box_size)
+    # puck_handle = gym.create_actor(env, box_asset, pose_box, "Box", 0, 0)
+    # gym.set_rigid_body_color(env, puck_handle, 0, gymapi.MESH_VISUAL_AND_COLLISION, gymapi.Vec3(0, 1, 0))
 
     # ------------------- Puck -------------------
     PUCK_HEIGHT = 0.01
@@ -142,7 +168,7 @@ def setup(gym, sim, env, viewer, args):
     pendulum_handle = gym.create_actor(env, pendulum_asset, pose_pendulum, "Pendulum", 0, 0)
     pendulum = URDF.load(asset_root + 'pendulum.urdf')
     pendulum_mass = pendulum.links[3].inertial.mass
-    
+
     rigid_props = gym.get_actor_rigid_shape_properties(env, pendulum_handle)
     for r in rigid_props:
         r.restitution = 1.0
@@ -198,6 +224,7 @@ def setup(gym, sim, env, viewer, args):
         franka_dof_props = gym.get_actor_dof_properties(env, franka_handle)
         franka_lower_limits = franka_dof_props['lower']
         franka_upper_limits = franka_dof_props['upper']
+        # franka_ranges = franka_upper_limits - franka_lower_limits
         franka_mids = 0.5 * (franka_upper_limits + franka_lower_limits)
         franka_dof_props['driveMode'].fill(gymapi.DOF_MODE_POS)
         franka_dof_props['stiffness'][7:] = 1e35
@@ -261,6 +288,7 @@ def setup(gym, sim, env, viewer, args):
         franka2_dof_props = gym.get_actor_dof_properties(env, franka2_handle)
         franka2_lower_limits = franka2_dof_props['lower']
         franka2_upper_limits = franka2_dof_props['upper']
+        # franka2_ranges = franka2_upper_limits - franka2_lower_limits
         franka2_mids = 0.5 * (franka2_upper_limits + franka2_lower_limits)
         franka2_dof_props['driveMode'].fill(gymapi.DOF_MODE_POS)
         franka2_dof_props['stiffness'][7:] = 1e35
@@ -306,12 +334,17 @@ def setup(gym, sim, env, viewer, args):
 
     torch.cuda.empty_cache()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # model_pendulum = torch.load('pinn_models/pendulum_PINN.pt').to(device)
+    # model_sliding = torch.load('pinn_models/same_sliding_new.pt').to(device)
+    # model_collision = torch.load('pinn_models/pendulum_box_col.pt').to(device)
+    # model_projectile = torch.load('pinn_models/projectile_general_.pt').to(device)
 
     if args.perception:
         print("--------- USING PEREPTION BASED MODELS! ---------")
         model_pendulum = torch.load('pinn_models/pendulum_general_.pt').to(device)
         model_projectile = torch.load('pinn_models/projectile_general_new.pt').to(device)
         model_sliding = torch.load('pinn_models/sliding_fixed_.pt').to(device)
+        # model_collision = torch.load('pinn_models/pendulum_peg_gen_per.pt').to(device)
         model_collision = torch.load('pinn_models/pendulum_peg_gen_per_new_model.pt').to(device)
     else:
         print("--------- USING MODELS WITHOUT PEREPTION! ---------")
@@ -364,6 +397,79 @@ def setup(gym, sim, env, viewer, args):
 # Bounds for actions
 bnds = ((0, math.pi / 2), (math.pi/4, math.pi / 2), (0, math.pi / 2))
 
+# Define actions
+action_name = ['Pendulum Plane Angle', 'Pendulum Drop Angle', 'Bridge Orientation Angle']
+
+
+# Generate a specific state
+def generate_specific_state(gym, sim, env, viewer, args, config, goal_center):
+    pendulum_handle = config['pendulum_handle']
+    goal_handle = config['goal_handle']
+    puck_handle = config['puck_handle']
+
+    gym.set_sim_rigid_body_states(sim, config['initial_state'], gymapi.STATE_ALL)
+    props = gym.get_actor_dof_properties(env, pendulum_handle)
+    props["driveMode"].fill(gymapi.DOF_MODE_POS)
+    props["stiffness"].fill(1e10)
+    props["damping"].fill(40)
+    gym.set_actor_dof_properties(env, pendulum_handle, props)
+
+    dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
+    dof_states['pos'][0] = 0.3
+    dof_states['pos'][1] = PENDULUM_INIT_ANGLE
+    dof_states['vel'][0] = 0.0
+    dof_states['vel'][1] = 0.0
+    gym.set_actor_dof_states(env, pendulum_handle, dof_states, gymapi.STATE_ALL)
+    pos_targets = [0.3, PENDULUM_INIT_ANGLE]
+    gym.set_actor_dof_position_targets(env, pendulum_handle, pos_targets)
+
+    body_states = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_ALL)
+    for i in range(len(body_states['pose']['p'])):
+        body_states['pose']['p'][i][0] += goal_center[0]
+        body_states['pose']['p'][i][1] += goal_center[1]
+    gym.set_actor_rigid_body_states(env, goal_handle, body_states, gymapi.STATE_ALL)
+
+    # bound = 3.5
+    # goal_center = np.random.uniform(-bound, bound, 2)
+    # while(abs(goal_center[0]) <= 0.5 or abs(goal_center[1]) <= 0.5):
+    #     goal_center = np.random.uniform(-bound, bound, 2)
+    # body_states = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_ALL)
+    # for i in range(len(body_states['pose']['p'])):
+    #     body_states['pose']['p'][i][0] = goal_center[0]
+    #     body_states['pose']['p'][i][1] = goal_center[1]
+    # gym.set_actor_rigid_body_states(env, goal_handle, body_states, gymapi.STATE_ALL)
+
+    config['curr_state'] = np.copy(gym.get_sim_rigid_body_states(sim, gymapi.STATE_ALL))
+
+    curr_time = gym.get_sim_time(sim)
+    while True:
+        t = gym.get_sim_time(sim)
+        if t > curr_time + 0.1:
+            break
+        gym.simulate(sim)
+        gym.fetch_results(sim, True)
+        gym.step_graphics(sim)
+        gym.render_all_camera_sensors(sim)
+        if args.simulate:
+            gym.draw_viewer(viewer, sim, False)
+            gym.sync_frame_time(sim)
+            if gym.query_viewer_has_closed(viewer):
+                break
+
+    # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_POS)
+    # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
+    if args.perception:
+        # puck_pos = get_piece_position(gym, sim, env, viewer, args, config)
+        puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
+        goal_pos = get_goal_position(gym, sim, env, viewer, args, config)
+    else:
+        puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
+        goal_pos = get_goal_position_from_simulator(gym, sim, env, viewer, args, config)
+    print("PUCK POS 1:", puck_pos)
+    print("PUCK POS 1 from sim:", gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)['pose']['p'][0])
+    print("GOAL POS 1:", goal_pos)
+    config['init_dist'] = sqrt((puck_pos[0] - goal_pos[0])**2 + (puck_pos[1] - goal_pos[1])**2)
+
 
 # Generate random state from training distribution
 def generate_random_state(gym, sim, env, viewer, args, config):
@@ -383,6 +489,7 @@ def generate_random_state(gym, sim, env, viewer, args, config):
     '''
     pendulum_handle = config['pendulum_handle']
     goal_handle = config['goal_handle']
+    puck_handle = config['puck_handle']
 
     gym.set_sim_rigid_body_states(sim, config['initial_state'], gymapi.STATE_ALL)
     props = gym.get_actor_dof_properties(env, pendulum_handle)
@@ -391,17 +498,6 @@ def generate_random_state(gym, sim, env, viewer, args, config):
     props["damping"].fill(40)
     gym.set_actor_dof_properties(env, pendulum_handle, props)
 
-    # Setting random goal position within bounds
-    goal_angle = np.random.uniform(bnds[0][0], bnds[0][1])
-    goal_dist = np.random.uniform(-0.5, -1.2)
-    goal_center = [goal_dist*math.sin(goal_angle), goal_dist*math.cos(goal_angle)]
-    body_states = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_ALL)
-    for i in range(len(body_states['pose']['p'])):
-        body_states['pose']['p'][i][0] += goal_center[0]
-        body_states['pose']['p'][i][1] += goal_center[1]
-    gym.set_actor_rigid_body_states(env, goal_handle, body_states, gymapi.STATE_ALL)
-
-    # Setting initial position of pendulum
     dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
     dof_states['pos'][0] = 0.3
     dof_states['pos'][1] = PENDULUM_INIT_ANGLE
@@ -410,6 +506,38 @@ def generate_random_state(gym, sim, env, viewer, args, config):
     gym.set_actor_dof_states(env, pendulum_handle, dof_states, gymapi.STATE_ALL)
     pos_targets = [0.3, PENDULUM_INIT_ANGLE]
     gym.set_actor_dof_position_targets(env, pendulum_handle, pos_targets)
+
+    # dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
+    # dof_states['pos'][0] = 0
+    # dof_states['pos'][1] = math.pi / 4
+    # dof_states['vel'][0] = 0.0
+    # dof_states['vel'][1] = 0.0
+    # gym.set_actor_dof_states(env, pendulum_handle, dof_states, gymapi.STATE_ALL)
+    # pos_targets = [0, math.pi / 4]
+    # gym.set_actor_dof_position_targets(env, pendulum_handle, pos_targets)
+
+    goal_angle = np.random.uniform(bnds[0][0], bnds[0][1])
+    # goal_dist = np.random.uniform(-0.5, -1.5)
+    goal_dist = np.random.uniform(-1.0, -1.0)
+    goal_center = [goal_dist*math.sin(goal_angle), goal_dist*math.cos(goal_angle)]
+
+    # print(goal_center)
+
+    body_states = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_ALL)
+    for i in range(len(body_states['pose']['p'])):
+        body_states['pose']['p'][i][0] += goal_center[0]
+        body_states['pose']['p'][i][1] += goal_center[1]
+    gym.set_actor_rigid_body_states(env, goal_handle, body_states, gymapi.STATE_ALL)
+
+    # bound = 3.5
+    # goal_center = np.random.uniform(-bound, bound, 2)
+    # while(abs(goal_center[0]) <= 0.5 or abs(goal_center[1]) <= 0.5):
+    #     goal_center = np.random.uniform(-bound, bound, 2)
+    # body_states = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_ALL)
+    # for i in range(len(body_states['pose']['p'])):
+    #     body_states['pose']['p'][i][0] = goal_center[0]
+    #     body_states['pose']['p'][i][1] = goal_center[1]
+    # gym.set_actor_rigid_body_states(env, goal_handle, body_states, gymapi.STATE_ALL)
 
     config['curr_state'] = np.copy(gym.get_sim_rigid_body_states(sim, gymapi.STATE_ALL))
 
@@ -428,13 +556,18 @@ def generate_random_state(gym, sim, env, viewer, args, config):
             if gym.query_viewer_has_closed(viewer):
                 break
 
+    # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_POS)
+    # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
     if args.perception:
-        puck_pos = get_piece_position(gym, sim, env, viewer, args, config)
+        # puck_pos = get_piece_position(gym, sim, env, viewer, args, config)
+        puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
         goal_pos = get_goal_position(gym, sim, env, viewer, args, config)
     else:
         puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
         goal_pos = get_goal_position_from_simulator(gym, sim, env, viewer, args, config)
-    
+    print("PUCK POS 1:", puck_pos)
+    print("PUCK POS 1 from sim:", gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)['pose']['p'][0])
+    print("GOAL POS 1:", goal_pos)
     config['init_dist'] = sqrt((puck_pos[0] - goal_pos[0])**2 + (puck_pos[1] - goal_pos[1])**2)
 
 
@@ -493,7 +626,7 @@ def get_goal_position(gym, sim, env, viewer, args, config):
     cam_y = camera_target.y
     obj_z = camera_position.z - get_goal_height(gym, sim, env, viewer, args, config)
     gym.write_camera_image_to_file(sim, env, camera_handle, gymapi.IMAGE_COLOR, args.img_file)
-    goal_pos, _ = detection.detection.location(args.img_file, 'red square')
+    goal_pos, _ = detection.location(args.img_file, 'red square')
     goal_pos = (-(goal_pos[0] - img_width / 2) * obj_z / focus_x) + cam_x, ((goal_pos[1] - img_height / 2) * obj_z / focus_y) + cam_y
     return goal_pos
 
@@ -531,12 +664,10 @@ def get_piece_position(gym, sim, env, viewer, args, config):
     crop = img[0:410, 90:500]
     cropped_img = "%s/cropped.png" % img_dir
     cv2.imwrite(cropped_img, crop)
-    piece_pos, _ = detection.detection.location(cropped_img, 'small blue ball')
+    piece_pos, _ = detection.location(cropped_img, 'small blue ball')
     piece_pos[0] += 90
     piece_pos = (-(piece_pos[0] - img_width/2) * obj_z / focus_x) + cam_x, ((piece_pos[1] - img_height/2) * obj_z / focus_y) + cam_y
-    # return piece_pos
-    # Getting position from the simulator due to frequent error in ball detection
-    return get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
+    return piece_pos
 
 
 # Generate Random Action
@@ -573,6 +704,7 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
     reward
     '''
     pendulum_handle = config['pendulum_handle']
+    goal_handle = config['goal_handle']
     puck_handle = config['puck_handle']
     bridge_handle = config['bridge_handle']
     init_dist = config['init_dist']
@@ -595,14 +727,21 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
     gym.set_actor_dof_position_targets(env, pendulum_handle, pos_targets)
 
     if args.fast:
+        # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
+        # goal_pos = goal_state['pose']['p'][0]
         if args.perception:
             goal_pos = get_goal_position(gym, sim, env, viewer, args, config)
         else:
             goal_pos = get_goal_position_from_simulator(gym, sim, env, viewer, args, config)
         return execute_action_pinn(config, goal_pos, action)
 
+    # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
+    # goal_pos = goal_state['pose']['p'][0]
+
     gym.set_sim_rigid_body_states(sim, config['curr_state'], gymapi.STATE_ALL)
     phi, theta, phi_bridge = action
+    # phi, theta, phi_bridge = -3 * math.pi / 4, math.pi / 2, -3 * math.pi / 4
+    # print(phi, theta, phi_bridge)
 
     # Move Franka's Arm to a given location at a given orientation without waiting for it
     def set_loc(location, orientation, attractor_handle_to_move, sphere_geom_to_move, axes_geom_to_move):
@@ -646,6 +785,17 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
         pos_targets[7] = 0.04
         pos_targets[8] = 0.04
         gym.set_actor_dof_position_targets(env, franka_handle_to_move, pos_targets)
+        # curr_time = gym.get_sim_time(sim)
+        # while gym.get_sim_time(sim) <= curr_time + 2.0:
+        #     gym.simulate(sim)
+        #     gym.fetch_results(sim, True)
+        #     gym.step_graphics(sim)
+        #     gym.render_all_camera_sensors(sim)
+        #     if args.simulate:
+        #         gym.draw_viewer(viewer, sim, False)
+        #         gym.sync_frame_time(sim)
+        #         if gym.query_viewer_has_closed(viewer):
+        #             exit()
 
     # Close Franka's Arm's gripper
     def close_gripper(franka_handle_to_move):
@@ -672,6 +822,8 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
     props["damping"] = (40, 0)
     gym.set_actor_dof_properties(env, pendulum_handle, props)
 
+    # set_loc(gymapi.Vec3(0, 0.405, 0.75), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
+
     # Define Movements by the Franka's Arm
     def franka_action(phi, theta, phi_bridge):
 
@@ -680,6 +832,7 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
 
         # -------- FRANKA'S BRIDGE MOVEMENT --------
         set_loc(gymapi.Vec3(-x_off*math.sin(PENDULUM_INIT_ANGLE), y_off*math.sin(PENDULUM_INIT_ANGLE), 0.85), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi/2 + math.pi/2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)        
+        # phi_bridge = math.pi / 2 - phi_bridge
         go_to_loc(gymapi.Vec3(-0.38, 0, 0.72), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
         set_loc(gymapi.Vec3(-x_off*math.sin(PENDULUM_INIT_ANGLE), y_off*math.sin(PENDULUM_INIT_ANGLE), 0.75), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi/2 + math.pi/2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)
         go_to_loc(gymapi.Vec3(-0.375, 0, 0.62), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
@@ -700,22 +853,46 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
         y = -0.38*math.sin(phi_bridge)
         go_to_loc(gymapi.Vec3(x, y, 0.9), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2 + phi_bridge), attractor_handle, sphere_geom, axes_geom)
         go_to_loc(gymapi.Vec3(x, y, 0.62), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2 + phi_bridge), attractor_handle, sphere_geom, axes_geom)
+
+        # # set_loc(gymapi.Vec3(-0.115, 0.375, 0.69), gymapi.Quat.from_euler_zyx(0.3, -math.pi / 2, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
+        # go_to_loc(gymapi.Vec3(-0.385, 0.01, 1.0), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle, sphere_geom, axes_geom)
+        # # set_loc(gymapi.Vec3(0, 0.395, 0.69), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
+        # go_to_loc(gymapi.Vec3(0, -0.385, 1.0), gymapi.Quat.from_euler_zyx(0, math.pi, 0), attractor_handle, sphere_geom, axes_geom)
+        # # set_loc(gymapi.Vec3(0, 0.36, 0.60), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
+        # go_to_loc(gymapi.Vec3(0, -0.385, 0.62), gymapi.Quat.from_euler_zyx(0, math.pi, 0), attractor_handle, sphere_geom, axes_geom)
         
         # Release the bridge
         open_gripper(franka_handle)
         print("OPENED!")
         go_to_loc(gymapi.Vec3(x, y, 1.0), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2 + phi_bridge), attractor_handle, sphere_geom, axes_geom)
+        # go_to_loc(gymapi.Vec3(0, 0.315, 0.51), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
+        # open_gripper(franka_handle2)
+        # print("OPENED!")
 
         # -------- FRANKA'S PENDULUM MOVEMENT --------
         phi = math.pi / 2 - phi
         theta = math.pi / 2 - theta
+
+        # go_to_loc(gymapi.Vec3(-0.115, 0.375, 0.75), gymapi.Quat.from_euler_zyx(0.3, -math.pi / 2, math.pi / 2))
+        # go_to_loc(gymapi.Vec3(-0.115, 0.375, 0.645), gymapi.Quat.from_euler_zyx(0.3, -math.pi / 2, math.pi / 2))
+        # close_gripper(franka_handle2)
+        # print("CLOSED!")
 
         props = gym.get_actor_dof_properties(env, pendulum_handle)
         props["driveMode"] = [gymapi.DOF_MODE_NONE, gymapi.DOF_MODE_NONE]
         props["stiffness"] = (0, 0.0)
         props["damping"] = (0, 0.0)
         gym.set_actor_dof_properties(env, pendulum_handle, props)
-        
+
+        # go_to_loc(gymapi.Vec3(-0.117, 0.377, 0.69), gymapi.Quat.from_euler_zyx(0.3, -math.pi / 2, math.pi / 2))
+        # go_to_loc(gymapi.Vec3(0, 0.395, 0.69), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2))
+        # go_to_loc(gymapi.Vec3(-x_off*math.sin(PENDULUM_INIT_ANGLE), y_off*math.sin(PENDULUM_INIT_ANGLE), 0.75), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi/2 + math.pi/2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)
+        # close_gripper(franka_handle2)
+        # print("CLOSED!")
+
+        # go_to_loc(gymapi.Vec3(-0.117, 0.377, 0.69), gymapi.Quat.from_euler_zyx(0.3, -math.pi / 2, math.pi / 2))
+        # go_to_loc(gymapi.Vec3(0, 0.395, 0.69), gymapi.Quat.from_euler_zyx(0, -math.pi / 2, math.pi / 2))
+
         # Adjust pendulum plane
         go_to_loc(gymapi.Vec3(-x_off, y_off, 0.83), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2 + math.pi / 2 - PENDULUM_INIT_ANGLE), attractor_handle2, sphere_geom2, axes_geom2)
         go_to_loc(gymapi.Vec3(0, 0.3, 0.83), gymapi.Quat.from_euler_zyx(0, math.pi, math.pi / 2), attractor_handle2, sphere_geom2, axes_geom2)
@@ -758,6 +935,8 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
         franka_action(phi, theta, phi_bridge)
     else:
         # ROBOT not present: Directly position the wedge followed by the ball as desired
+        # set_loc(gymapi.Vec3(0, -0.4, 1), gymapi.Quat.from_euler_zyx(0, math.pi, 0), attractor_handle, sphere_geom, axes_geom)
+        # set_loc(gymapi.Vec3(0, 0.4, 1), gymapi.Quat.from_euler_zyx(0, math.pi, 0), attractor_handle2, sphere_geom2, axes_geom2)
         phi = -math.pi / 2 + phi
 
         BRIDGE_DIST = -ROUND_TABLE_RADIUS - BRIDGE_LENGTH/2
@@ -780,8 +959,49 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
         dof_states['vel'][1] = 0.0
         gym.set_actor_dof_states(env, pendulum_handle, dof_states, gymapi.STATE_ALL)
     
+    # angle1 = math.pi / 2
+    # angle2 = math.pi / 4
+    # curr_loc = np.array([0.305, 0, 0.9])
+    # new_loc = angle_to_location(curr_loc, angle1, np.zeros(3))
+    # new_x = new_loc[0]
+    # new_y = new_loc[1]
+    # new_z = new_loc[2]
+    # print(new_loc)
+    # go_to_loc(gymapi.Vec3(new_x, new_y, new_z), gymapi.Quat.from_euler_zyx(0, math.pi, angle1), attractor_handle2, sphere_geom2, axes_geom2)
+    # open_gripper(franka_handle2)
+    # print("OPENED!")
+
+    # body_states = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)
+    # quat = gymapi.Quat.from_euler_zyx(0.0, 0.0, phi)
+    # body_states['pose']['r'][0][0] = quat.x
+    # body_states['pose']['r'][0][1] = quat.y
+    # body_states['pose']['r'][0][2] = quat.z
+    # body_states['pose']['r'][0][3] = quat.w
+    # gym.set_actor_rigid_body_states(env, puck_handle, body_states, gymapi.STATE_ALL)
+
+    # dof_states = gym.get_actor_dof_states(env, pendulum_handle, gymapi.STATE_ALL)
+    # dof_states['pos'][0] = phi
+    # dof_states['pos'][1] = theta
+    # dof_states['vel'][0] = 0.0
+    # dof_states['vel'][1] = 0.0
+    # gym.set_actor_dof_states(env, pendulum_handle, dof_states, gymapi.STATE_ALL)
+    # pos_targets = [phi, 0.0]
+    # gym.set_actor_dof_position_targets(env, pendulum_handle, pos_targets)
+
+    # bridge_states = gym.get_actor_rigid_body_states(env, bridge_handle, gymapi.STATE_ALL)
+    # bridge_states['pose']['p'][0] = (3.0 * math.cos(phi_bridge), 3.0 * math.sin(phi_bridge), bridge_states['pose']['p'][0][2])
+    # temp = gymapi.Quat.from_euler_zyx(0.0, 0.0, phi_bridge)
+    # bridge_states['pose']['r'][0] = (temp.x, temp.y, temp.z, temp.w)
+    # gym.set_actor_rigid_body_states(env, bridge_handle, bridge_states, gymapi.STATE_ALL)
+
+    # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)
+    # puck_pos = puck_state['pose']['p'][0]
     curr_time = gym.get_sim_time(sim)
     while gym.get_sim_time(sim) <= curr_time + 4.0:
+        # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)
+        # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
+        # puck_pos = puck_state['pose']['p'][0]
+        # goal_pos = goal_state['pose']['p'][0]
         gym.simulate(sim)
         gym.fetch_results(sim, True)
         gym.step_graphics(sim)
@@ -795,8 +1015,28 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
         if puck_state['pose']['p'][0][2] < 0.15:
             break
 
+        # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)
+        # x, y, z = puck_state['pose']['p'][0]
+        # vx, vy, vz = puck_state['vel']['linear'][0]
+        # v = math.sqrt(vx**2 + vy**2)
+        # if v > 0.01 and not modified:
+        #     modified = True
+        #     theta = math.atan(vy / vx)
+        #     vx = (vx / math.cos(theta)) * math.cos(abs(theta - phi)) * math.cos(phi)
+        #     vy = (vy / math.sin(theta)) * math.cos(abs(theta - phi)) * math.sin(phi)
+        #     puck_state['vel']['linear'][0][0], puck_state['vel']['linear'][0][1] = vx, vy
+        #     gym.set_actor_rigid_body_states(env, puck_handle, puck_state, gymapi.STATE_ALL)
+
+        # if puck_pos[2] <= 2.0:
+        #     break
+        # if modified and v < 0.01:
+        #     break
+
+    # puck_state = gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_POS)
+    # goal_state = gym.get_actor_rigid_body_states(env, goal_handle, gymapi.STATE_POS)
     if args.perception:
-        puck_pos = get_piece_position(gym, sim, env, viewer, args, config)
+        # puck_pos = get_piece_position(gym, sim, env, viewer, args, config)
+        puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
         goal_pos = get_goal_position(gym, sim, env, viewer, args, config)
     else:
         puck_pos = get_piece_position_from_simulator(gym, sim, env, viewer, args, config)
@@ -805,8 +1045,18 @@ def execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos=
     with open('experiments/position_' + args.env + '.txt', 'a') as pos_f:
         pos_f.write(f'{puck_pos}\n')
 
+    print("PUCK POS 2:", puck_pos)
+    print("PUCK POS 2 from sim:", gym.get_actor_rigid_body_states(env, puck_handle, gymapi.STATE_ALL)['pose']['p'][0])
+    print("GOAL POS 2:", goal_pos)
     dist = sqrt((puck_pos[0] - goal_pos[0])**2 + (puck_pos[1] - goal_pos[1])**2)
     reward = 1 - dist / init_dist
+    
+    # BRIDGE_DIST = -ROUND_TABLE_RADIUS - BRIDGE_LENGTH/2
+    # bridge_states = gym.get_actor_rigid_body_states(env, bridge_handle, gymapi.STATE_ALL)
+    # bridge_states['pose']['p'][0] = (BRIDGE_DIST, 0, bridge_states['pose']['p'][0][2])
+    # temp = gymapi.Quat.from_euler_zyx(0.0, 0.0, 0)
+    # bridge_states['pose']['r'][0] = (temp.x, temp.y, temp.z, temp.w)
+    # gym.set_actor_rigid_body_states(env, bridge_handle, bridge_states, gymapi.STATE_ALL)
 
     if return_ball_pos:
         return reward, puck_pos
@@ -835,6 +1085,7 @@ def execute_action_pinn(config, goal_pos, action):
     puck_mass = config['puck_mass']
     pendulum_mass = config['pendulum_mass']
     phi, theta, phi_bridge = action
+    # phi, theta, phi_bridge = -3 * math.pi / 4, math.pi / 2, -3 * math.pi / 4
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -849,27 +1100,53 @@ def execute_action_pinn(config, goal_pos, action):
     omega = out[1].cpu().detach().numpy()
 
     v_prev = omega * PENDULUM_LENGTH
+    
+    # print("BOB VEL", v_prev.item())
+
     inp = torch.tensor([pendulum_mass * 1000, puck_mass * 1000, v_prev]).to(device).unsqueeze(0)
     puck_vel = model_collision.forward(inp)[0]
     init_x, init_y = puck_vel * math.cos(phi), puck_vel * math.sin(phi)
+
+    # print("PUCK VEL", puck_vel.item())
 
     t_query = 0.0
     while True:
         inp = torch.tensor([-puck_vel, t_query]).to(device).unsqueeze(0)
         [vel, distance] = model_sliding(inp)[0]
         curr_x, curr_y = -distance * init_x / puck_vel, -distance * init_y / puck_vel
+        # print(vel.item(), distance.item())
+        # print("############################", distance.item())
 
         if abs(vel) < 0.1:
             break
+        # print(phi,phi_bridge,math.atan(curr_y / curr_x))
         if abs(math.atan(curr_y / curr_x) - phi_bridge) > 0.1:
+            # print("NO BRIDGE:", abs(math.atan(curr_y / curr_x) - phi_bridge))
             if distance > ROUND_TABLE_RADIUS:
                 break
         else:
+            # print("HAVE BRIDGE:", abs(math.atan(curr_y / curr_x) - phi_bridge))
             if distance > BRIDGE_LENGTH + ROUND_TABLE_RADIUS:
                 break
         t_query += 0.001
 
     vel = -vel
+
+    # print(distance)
+
+    # print(vel.item(), distance.item())
+
+    # if abs(math.atan(curr_y / curr_x) - phi_bridge) < 0.1:
+    #     init_vel, init_x, init_y, init_distance = vel, curr_x, curr_y, distance
+    #     t_query = 0.0
+    #     while True:
+    #         inp = torch.tensor([init_vel, t_query]).to(device).unsqueeze(0)
+    #         distance = model_sliding(inp)[0][1]
+    #         vel = model_sliding(inp)[0][0]
+    #         curr_x, curr_y = distance * init_x / init_vel, distance * init_y / init_vel
+    #         if init_distance + distance > BRIDGE_LENGTH + ROUND_TABLE_RADIUS or vel < 0.01:
+    #             break
+    #         t_query += 0.01
     if abs(math.atan(curr_y / curr_x) - phi_bridge) > 0.1:
         if distance <= ROUND_TABLE_RADIUS:
             dist = sqrt((curr_x - goal_pos[0])**2 + (curr_y - goal_pos[1])**2)
@@ -897,10 +1174,31 @@ def execute_action_pinn(config, goal_pos, action):
     dist = sqrt((x_new - goal_pos[0])**2 + (y_new - goal_pos[1])**2)
     reward = 1 - dist / init_dist
 
+    # print(x_new.item(), y_new.item(), phi, theta, phi_bridge)
+    # print(reward)
+
     return reward
 
 
-def execute_random_action(gym, sim, env, viewer, args, config):
+    # t_query = 0.0
+    # while True:
+    #     inp = torch.tensor([puck_vel, t_query]).to(device).unsqueeze(0)
+    #     distance = model_sliding(inp)[0][1]
+    #     vel = model_sliding(inp)[0][0]
+    #     curr_x, curr_y = distance * init_x / puck_vel, distance * init_y / puck_vel
+    #     # if (curr_x > PENDULUM_TABLE_DIM / 2 or curr_y > PENDULUM_TABLE_DIM / 2) and (abs(math.atan(curr_y / curr_x) - phi_bridge) > 1.0 or distance * math.sin(math.atan(curr_y / curr_x) - phi_bridge) > 0.25):
+    #     if (distance > ROUND_TABLE_RADIUS) and (abs(math.atan(curr_y / curr_x) - phi_bridge) > 1.0 or distance * math.sin(math.atan(curr_y / curr_x) - phi_bridge) > 0.25):
+    #         break
+    #     if vel < 0.01:
+    #         break
+    #     t_query += 0.01
+    # print(curr_x, curr_y)
+    # dist = sqrt((curr_x - goal_pos[0])**2 + (curr_y - goal_pos[1])**2)
+    # reward = 1 - dist / init_dist
+    # return reward
+
+
+def execute_random_action(gym, sim, env, viewer, args, config, return_ball_pos=False):
     '''
     Execute a random 'action' in the environment
     
@@ -916,5 +1214,9 @@ def execute_random_action(gym, sim, env, viewer, args, config):
     (action, reward) pair
     '''
     action = generate_random_action()
-    reward = execute_action(gym, sim, env, viewer, args, config, action)
-    return action, reward
+    if (return_ball_pos):
+        reward, ball_pos = execute_action(gym, sim, env, viewer, args, config, action, return_ball_pos)
+        return action, reward, ball_pos
+    else:
+        reward = execute_action(gym, sim, env, viewer, args, config, action)
+        return action, reward

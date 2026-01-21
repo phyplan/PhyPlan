@@ -1,0 +1,1 @@
+update_label = lambda *args, **kwargs: None

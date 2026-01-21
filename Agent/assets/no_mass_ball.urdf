@@ -19,13 +19,13 @@
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <sphere radius="0.015"/>
+        <sphere radius="0.02"/>
       </geometry>
     </collision>
-    <inertial>
+    <!-- <inertial> -->
       <!-- <mass value="0.5"/> -->
       <!-- <friction value="1.0"/> -->
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
-    </inertial>
+      <!-- <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/> -->
+    <!-- </inertial> -->
   </link>
 </robot>

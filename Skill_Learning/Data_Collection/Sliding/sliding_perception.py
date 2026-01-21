@@ -5,6 +5,7 @@ import supervision as sv
 from typing import List
 import torch
 import yaml
+import cv2
 
 
 config_filename = "sliding_config.yaml"
@@ -13,7 +14,7 @@ with open(config_filename, "r") as f:
 
 
 #Setting up Segment Anything and Grounding Dino
-HOME ="/home/dell/Desktop/isaacgym/python/examples/DataCollection2.0/"
+HOME ="/path/to/dino/and/sam"
 GROUNDING_DINO_CONFIG_PATH = os.path.join(HOME, "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
 print(GROUNDING_DINO_CONFIG_PATH, "; exist:", os.path.isfile(GROUNDING_DINO_CONFIG_PATH))
 GROUNDING_DINO_CHECKPOINT_PATH = os.path.join(HOME, "weights", "groundingdino_swint_ogc.pth")
@@ -80,8 +81,6 @@ import numpy as np
 
 pattern = r'rgb_(\d+)_(\d+\.\d+)_(\d+\.\d+)_(\d+\.\d+)_(\d+\.\d+)_(\d+\.\d+)_(\d+)\.png'
 
-# List all files in the folder
-#files = os.listdir(folder_path)
 
 # Function to extract 'ep' and 'i' values from filename
 def extract_ep(filename):
@@ -95,7 +94,7 @@ def extract_ep(filename):
 t = 0
 for j in range(0,len(files)):
   all_detections = []
-  if len(files[j]) < 20:
+  if len(files[j]) < 3:
     continue
 
 
@@ -163,13 +162,14 @@ for j in range(0,len(files)):
   diff_p[:,0] =   diff_p[:,0] * 4/f_x
   diff_p[:,1] =   diff_p[:,1] * 4/f_y
 
-  #for calculating difference start after ten images to avoid errors 
-  for i in range(10,len(diff_p)):
+  #for calculating difference start after ten images to avoid errors
+  # Warning ignored for now
+  for i in range(1,len(diff_p)):
     ep, time, cur_dis, cur_vel  ,friction,init_vel, _ = extract_ep(files[j][i])
-
-    data.append([t,i-10,friction,init_vel,time,(diff_p[i][0]-diff_p[i-10][0])/0.1,diff_p[i][0]])
-    act_data.append([t,i-10,friction,init_vel,time,cur_vel,cur_dis])
-    vel.append((diff_p[i][0]-diff_p[i-10][0])/0.01)
+    # if (abs(int(time/0.2) - time/0.2) < 1e-3 and time >= 0.199):
+    data.append([t,i-1,friction,init_vel,time,(diff_p[i][0]-diff_p[i-1][0])/0.2,diff_p[i][0]])
+    act_data.append([t,i-1,friction,init_vel,time,cur_vel,cur_dis])
+    vel.append((diff_p[i][0]-diff_p[i-1][0])/0.2)
     dist.append(diff_p[i][0])
     act_vel.append(cur_vel)
     act_dist.append(cur_dis)
@@ -180,7 +180,7 @@ df = pd.DataFrame(data)
 # File name
 file_name = config['PERCEPTION_SAVE_DIR']
 # Save DataFrame to CSV
-df.to_csv(file_name, index=False,header = False)
+df.to_csv(file_name, index=False,header = False, mode='a+')
 print(f"Data saved to {file_name}")
 
 
@@ -191,6 +191,3 @@ if config['WITHOUT PERCEPTION']:
     # Save DataFrame to CSV
     df.to_csv(file_name, index=False,header = False)
     print(f"Data saved to {file_name}")
-
-
-

@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot name="pendulum">
+
+  <!-- Base -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Rod: no visual rotation now; frame already aligned -->
+  <link name="rod_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/> <!-- No rotation needed -->
+      <geometry>
+        <cylinder length="0.6" radius="0.001"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.00001"/>
+      <inertia ixx="1e-6" ixy="0"  ixz="0"
+               iyy="1e-6" iyz="0"
+               izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Box -->
+  <link name="mass_box_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="10.0"/>
+      <inertia ixx="1e-4" ixy="0"  ixz="0"
+               iyy="1e-4" iyz="0"
+               izz="1e-4"/>
+    </inertial>
+  </link>
+
+  <!-- Sphere -->
+  <link name="tip_sphere_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.00003"/>
+      <inertia ixx="1e-6" ixy="0"  ixz="0"
+               iyy="1e-6" iyz="0"
+               izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- Rotated joint: base to rod (align Z with old Y) -->
+  <joint name="pendulum_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="rod_link"/>
+    <origin xyz="0 0 0" rpy="0 0 -1.5708"/>
+ <!-- Rotate whole rod frame to align along Z -->
+    <axis xyz="1 0 0"/>
+    <limit effort="1.0" velocity="5.0" lower="-3.14" upper="3.14"/>
+  </joint>
+
+  <!-- Attach box to lower end of rod (z = -0.3 in rod frame) -->
+  <joint name="rod_to_box" type="fixed">
+    <parent link="rod_link"/>
+    <child link="mass_box_link"/>
+    <origin xyz="0 0 -0.3" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Attach sphere to upper end of rod (z = +0.3 in rod frame) -->
+  <joint name="rod_to_sphere" type="fixed">
+    <parent link="rod_link"/>
+    <child link="tip_sphere_link"/>
+    <origin xyz="0 0 0.3" rpy="0 0 0"/>
+  </joint>
+
+</robot>

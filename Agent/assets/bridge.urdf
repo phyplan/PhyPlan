@@ -13,6 +13,10 @@
     <color rgba="1.0 1.0 0.0 1.0"/>
   </material>
 
+  <material name="Brown">
+    <color rgba="0.545 0.271 0.074 1"/>
+  </material>
+
   <link name="base">
   </link>
 
