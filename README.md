@@ -1,5 +1,5 @@
 # PhyPlan
-## Generalizable and Rapid Physical Task Planning with Physics-Informed Skill Networks for Robot Manipulators
+## Learning To Plan Tasks with Generalizable and Rapid Physical Reasoning for Embodied Manipulation
 
 ### Please find here the [Website](https://phyplan.github.io/), and the [Paper]().
 
