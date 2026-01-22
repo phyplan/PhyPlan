@@ -169,11 +169,12 @@ Training different skills like sliding, swinging, throwing, collision.
 
 
 ## Citation
+```
 @inproceedings{phyplan2026,
       title     = {PhyPlan: Learning To Plan Tasks with Generalizable and Rapid Physical Reasoning for Embodied Manipulation},
       author    = {Kanwar, Ankit and Soin, Hartej, and Barnawal, Abhinav and Chopra, Mudit and Vagadia, Harshil and Banerjee, Tamajit and Tuli, Shreshth and Chakraborty, Souvik and Paul, Rohan},
       booktitle = {},
       year      = {2026}
     }
-
+```
 </div>
